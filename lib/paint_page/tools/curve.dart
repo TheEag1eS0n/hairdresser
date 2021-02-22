@@ -56,6 +56,10 @@ class CurveLine implements Tool {
   @override
   bool hitZone(tap) => distanceToLine(tap) <= paint.strokeWidth;
 
+  @override
+  // TODO: implement textPainter
+  TextPainter get textPainter => throw UnimplementedError();
+
 }
 
 /*

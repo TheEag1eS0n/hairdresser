@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hairdresser/paint_page/canvasPainter.dart';
@@ -5,6 +7,7 @@ import 'package:hairdresser/paint_page/tool.dart';
 import 'package:hairdresser/paint_page/tools/brush.dart';
 import 'package:hairdresser/paint_page/tools/curve.dart';
 import 'package:hairdresser/paint_page/tools/erase.dart';
+import 'package:hairdresser/paint_page/tools/text.dart';
 
 class PaintPage extends StatefulWidget {
   @override
@@ -14,10 +17,19 @@ class PaintPage extends StatefulWidget {
 enum DrawingTool { Brush, Curve, Eraser, Text }
 
 class _PaintPageState extends State<PaintPage> {
+  final textController = TextEditingController();
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
+
   DrawingTool _currentTool = DrawingTool.Brush;
   UpdateType updateType = UpdateType.AddPoint;
   List<Tool> _shapeList = [];
-  List<Tool> _shapeUndoCahce = [];
+  List<Tool> _shapeUndoCache = [];
+
+  List<CanvasText> _textList = [];
   int step = 0;
 
   List<bool> get selected {
@@ -28,7 +40,7 @@ class _PaintPageState extends State<PaintPage> {
 
   void addRedoCache() {
     setState(() {
-      _shapeList.add(_shapeUndoCahce.removeLast());
+      _shapeList.add(_shapeUndoCache.removeLast());
     });
   }
 
@@ -42,7 +54,7 @@ class _PaintPageState extends State<PaintPage> {
           GestureDetector(
             onPanStart: (event) {
               setState(() {
-                _shapeUndoCahce = [];
+                _shapeUndoCache = [];
                 switch (_currentTool) {
                   case DrawingTool.Brush:
                     updateType = UpdateType.AddPoint;
@@ -67,19 +79,22 @@ class _PaintPageState extends State<PaintPage> {
                             ..strokeWidth = 5
                             ..strokeCap = StrokeCap.round));
                     } else {
-                      // print('Can curve');
                       updateType = UpdateType.SetCenterPoint;
                     }
 
                     break;
                   case DrawingTool.Eraser:
+                    updateType = UpdateType.AddPoint;
                     _shapeList.add(Erase(start: event.localPosition));
                     break;
                   case DrawingTool.Text:
-                    print('Text');
+                    if (_shapeList.isEmpty || (_shapeList.last.runtimeType != CanvasText ||
+                        !_shapeList.last.hitZone(event.localPosition)))
+                      _showDialog(event.localPosition);
+                    else
+                      _shapeList.last.start = event.localPosition;
                     break;
                 }
-                // print(_shapeList.last.runtimeType);
               });
             },
             onPanUpdate: (event) {
@@ -130,8 +145,6 @@ class _PaintPageState extends State<PaintPage> {
                       onPressed: (int index) {
                         setState(() {
                           _currentTool = DrawingTool.values[index];
-                          if (_currentTool == DrawingTool.Text)
-                            _showDialog();
                         });
                       },
                       constraints: BoxConstraints(minHeight: 50, minWidth: 50),
@@ -150,11 +163,13 @@ class _PaintPageState extends State<PaintPage> {
                             padding: new EdgeInsets.all(0),
                             constraints:
                                 BoxConstraints(minHeight: 30, minWidth: 30),
-                            onPressed: () {
+                          onPressed:
+                          _shapeList.isEmpty ? null : () {
                               setState(() {
-                                _shapeUndoCahce.add(_shapeList.removeLast());
+                                _shapeUndoCache.add(_shapeList.removeLast());
                               });
-                            }),
+                          },
+                        ),
                         IconButton(
                           icon: Icon(Icons.redo),
                           splashRadius: 20,
@@ -163,7 +178,7 @@ class _PaintPageState extends State<PaintPage> {
                           constraints:
                               BoxConstraints(minHeight: 40, minWidth: 40),
                           onPressed:
-                              _shapeUndoCahce.isEmpty ? null : addRedoCache,
+                              _shapeUndoCache.isEmpty ? null : addRedoCache,
                         ),
                       ],
                     )
@@ -175,18 +190,41 @@ class _PaintPageState extends State<PaintPage> {
     );
   }
 
-  _showDialog() {
-    showDialog(context: context, builder: (_) => AlertDialog(
-      title: Text('Choose a paint style'),
-      content: TextField(
-        autofocus: true,
-
+  _showDialog(Offset position) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('Что хотите написать'),
+        content: Form(
+          child: TextFormField(
+            controller: textController,
+            validator: (value) {
+              if (value!.isEmpty) {
+                return 'Напишите что-нибудь :)';
+              }
+              return null;
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+                _shapeList.add(CanvasText(
+                    text: textController.text,
+                    start: position,
+                    paint: Paint()
+                      ..color = currentColor
+                      ..style = PaintingStyle.stroke
+                      ..strokeWidth = 5
+                      ..strokeCap = StrokeCap.round));
+              });
+            },
+            child: Text('SUBMIT'),
+          ),
+        ],
       ),
-      actions: [
-        IconButton(icon: Icon(Icons.close), onPressed: () {
-          Navigator.of(context).pop();
-        })
-      ],
-    ));
+    );
   }
 }

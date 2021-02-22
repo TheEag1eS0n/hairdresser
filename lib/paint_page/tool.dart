@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
+
 enum UpdateType {
   AddPoint,
   SetEndPoint,
@@ -17,6 +19,7 @@ abstract class Tool {
   void update(Offset point, UpdateType updateType);
 
   Path get path;
+  TextPainter get textPainter;
 
   bool hitZone(tap);
 }

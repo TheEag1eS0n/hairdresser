@@ -37,4 +37,8 @@ class Brush implements Tool {
     // TODO: implement hitZone
     throw UnimplementedError();
   }
+
+  @override
+  // TODO: implement textPainter
+  TextPainter get textPainter => throw UnimplementedError();
 }

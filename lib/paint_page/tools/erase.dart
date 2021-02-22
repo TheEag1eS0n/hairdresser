@@ -44,4 +44,8 @@ class Erase implements Tool {
     // TODO: implement hitZone
     return false;
   }
+
+  @override
+  // TODO: implement textPainter
+  TextPainter get textPainter => throw UnimplementedError();
 }
