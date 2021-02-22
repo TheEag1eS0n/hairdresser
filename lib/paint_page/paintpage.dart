@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hairdresser/paint_page/canvasPainter.dart';
 import 'package:hairdresser/paint_page/tool.dart';
 import 'package:hairdresser/paint_page/tools/brush.dart';
@@ -10,7 +11,7 @@ class PaintPage extends StatefulWidget {
   _PaintPageState createState() => _PaintPageState();
 }
 
-enum DrawingTool { Brush, Curve, Eraser }
+enum DrawingTool { Brush, Curve, Eraser, Text }
 
 class _PaintPageState extends State<PaintPage> {
   DrawingTool _currentTool = DrawingTool.Brush;
@@ -20,20 +21,18 @@ class _PaintPageState extends State<PaintPage> {
   int step = 0;
 
   List<bool> get selected {
-    var buttons = List.generate(3, (_) => false);
+    var buttons = List.generate(4, (_) => false);
     buttons[_currentTool.index] = true;
     return buttons;
   }
 
-  void addRedoCache () {
+  void addRedoCache() {
     setState(() {
       _shapeList.add(_shapeUndoCahce.removeLast());
     });
   }
 
   Color currentColor = Colors.red;
-
-  double _brushSize = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +73,10 @@ class _PaintPageState extends State<PaintPage> {
 
                     break;
                   case DrawingTool.Eraser:
-                    print('eraser');
                     _shapeList.add(Erase(start: event.localPosition));
+                    break;
+                  case DrawingTool.Text:
+                    print('Text');
                     break;
                 }
                 // print(_shapeList.last.runtimeType);
@@ -120,11 +121,17 @@ class _PaintPageState extends State<PaintPage> {
                           Icons.cake,
                           size: 20,
                         ),
+                        Icon(
+                          Icons.text_fields,
+                          size: 20,
+                        ),
                       ],
                       isSelected: selected,
                       onPressed: (int index) {
                         setState(() {
                           _currentTool = DrawingTool.values[index];
+                          if (_currentTool == DrawingTool.Text)
+                            _showDialog();
                         });
                       },
                       constraints: BoxConstraints(minHeight: 50, minWidth: 50),
@@ -155,7 +162,8 @@ class _PaintPageState extends State<PaintPage> {
                           padding: new EdgeInsets.all(0),
                           constraints:
                               BoxConstraints(minHeight: 40, minWidth: 40),
-                          onPressed: _shapeUndoCahce.isEmpty ? null : addRedoCache,
+                          onPressed:
+                              _shapeUndoCahce.isEmpty ? null : addRedoCache,
                         ),
                       ],
                     )
@@ -165,5 +173,20 @@ class _PaintPageState extends State<PaintPage> {
         ],
       ),
     );
+  }
+
+  _showDialog() {
+    showDialog(context: context, builder: (_) => AlertDialog(
+      title: Text('Choose a paint style'),
+      content: TextField(
+        autofocus: true,
+
+      ),
+      actions: [
+        IconButton(icon: Icon(Icons.close), onPressed: () {
+          Navigator.of(context).pop();
+        })
+      ],
+    ));
   }
 }
