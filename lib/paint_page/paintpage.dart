@@ -1,6 +1,7 @@
-import 'dart:html';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hairdresser/paint_page/canvasPainter.dart';
 import 'package:hairdresser/paint_page/tool.dart';
 import 'package:hairdresser/paint_page/tools/brush.dart';
@@ -28,8 +29,18 @@ class _PaintPageState extends State<PaintPage> {
   List<Tool> _shapeList = [];
   List<Tool> _shapeUndoCache = [];
 
-  List<CanvasText> _textList = [];
+  List<Color> _colors = [
+    Colors.black,
+    Colors.red,
+    Colors.blue,
+    Colors.lime,
+    Colors.indigo,
+    Colors.cyan,
+    Colors.green,
+  ];
+  List<bool> _colorSelected = List<bool>.generate(18, (index) => index == 0);
 
+  Color _currentColor = Colors.black;
   double _colorPanelHeight = 0;
 
   List<bool> get selected {
@@ -44,8 +55,6 @@ class _PaintPageState extends State<PaintPage> {
     });
   }
 
-  Color currentColor = Colors.red;
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -53,17 +62,17 @@ class _PaintPageState extends State<PaintPage> {
         GestureDetector(
           onPanStart: (event) {
             setState(() {
+              Paint paint = Paint()
+                ..color = _currentColor
+                ..style = PaintingStyle.stroke
+                ..strokeWidth = 5
+                ..strokeCap = StrokeCap.round;
               _shapeUndoCache = [];
               switch (_currentTool) {
                 case DrawingTool.Brush:
                   updateType = UpdateType.AddPoint;
-                  _shapeList.add(Brush(
-                      start: event.localPosition,
-                      paint: Paint()
-                        ..color = currentColor
-                        ..style = PaintingStyle.stroke
-                        ..strokeWidth = 5
-                        ..strokeCap = StrokeCap.round));
+                  _shapeList
+                      .add(Brush(start: event.localPosition, paint: paint));
                   break;
                 case DrawingTool.Curve:
                   if (_shapeList.isEmpty ||
@@ -73,7 +82,7 @@ class _PaintPageState extends State<PaintPage> {
                     _shapeList.add(CurveLine(
                         start: event.localPosition,
                         paint: Paint()
-                          ..color = currentColor
+                          ..color = _currentColor
                           ..style = PaintingStyle.stroke
                           ..strokeWidth = 5
                           ..strokeCap = StrokeCap.round));
@@ -144,17 +153,17 @@ class _PaintPageState extends State<PaintPage> {
                     isSelected: selected,
                     onPressed: (int index) {
                       setState(() {
+                        _colorPanelHeight =
+                            DrawingTool.values[index] == _currentTool ? 100 : 0;
                         _currentTool = DrawingTool.values[index];
-                        _colorPanelHeight = 100;
                       });
-                      // Scaffold.of(context).showBottomSheet((context) => BottomSheet());
                     },
                     constraints: BoxConstraints(minHeight: 50, minWidth: 50),
                     renderBorder: false,
-                    splashColor: currentColor.withOpacity(0.25),
-                    highlightColor: currentColor.withOpacity(0.5),
-                    selectedColor: currentColor,
-                    fillColor: currentColor.withOpacity(0.1),
+                    splashColor: _currentColor.withOpacity(0.25),
+                    highlightColor: _currentColor.withOpacity(0.5),
+                    selectedColor: _currentColor,
+                    fillColor: _currentColor.withOpacity(0.1),
                   ),
                   ButtonBar(
                     children: [
@@ -193,14 +202,54 @@ class _PaintPageState extends State<PaintPage> {
           left: 0,
           right: 0,
           child: AnimatedContainer(
+            alignment: Alignment.centerLeft,
             duration: Duration(milliseconds: 500),
             curve: Curves.easeOut,
             height: _colorPanelHeight,
             color: Colors.grey[200],
-            child: Container(
-                height: 20,
-                width: 20,
-                color: Colors.red,
+            padding: EdgeInsets.all(10),
+            child: Row(
+              children: [
+                Ink(
+                    width: 150,
+                    height: 100,
+                    child: GridView.count(
+                      crossAxisCount: 6,
+                      crossAxisSpacing: 5,
+                      mainAxisSpacing: 5,
+                      children: List.generate(
+                        _colorSelected.length,
+                        (index) => InkWell(
+                          onTap: () {
+                            setState(() {
+                              _colorPanelHeight = 0;
+                              for (int indexBtn = 0;
+                                  indexBtn < _colorSelected.length;
+                                  indexBtn++) {
+                                _colorSelected[indexBtn] = indexBtn == index;
+                              }
+                              _currentColor = _colors[index % _colors.length];
+                            });
+                          },
+                          child: Ink(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: _colors[index % _colors.length],
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                    color: _colorSelected[index]
+                                        ? Colors.white
+                                        : Colors.black,
+                                    width: 2),
+                              ),
+                              width: 10,
+                              height: 10,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )),
+              ],
             ),
           ),
         ),
@@ -233,7 +282,7 @@ class _PaintPageState extends State<PaintPage> {
                     text: textController.text,
                     start: position,
                     paint: Paint()
-                      ..color = currentColor
+                      ..color = _currentColor
                       ..style = PaintingStyle.stroke
                       ..strokeWidth = 5
                       ..strokeCap = StrokeCap.round));
