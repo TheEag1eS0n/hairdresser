@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hairdresser/paint_page/canvasPainter.dart';
 import 'package:hairdresser/paint_page/tool.dart';
+import 'package:hairdresser/paint_page/tools/arrow.dart';
 import 'package:hairdresser/paint_page/tools/brush.dart';
 import 'package:hairdresser/paint_page/tools/curve.dart';
 import 'package:hairdresser/paint_page/tools/erase.dart';
@@ -14,7 +17,7 @@ class PaintPage extends StatefulWidget {
   _PaintPageState createState() => _PaintPageState();
 }
 
-enum DrawingTool { Brush, Curve, Eraser, Text }
+enum DrawingTool { Brush, Curve, Eraser, Text, Arrow }
 
 class _PaintPageState extends State<PaintPage> {
   final textController = TextEditingController();
@@ -43,9 +46,10 @@ class _PaintPageState extends State<PaintPage> {
 
   Color _currentColor = Colors.black;
   double _colorPanelHeight = 0;
+  double _stWidth = 0;
 
   List<bool> get selected {
-    var buttons = List.generate(4, (_) => false);
+    var buttons = List.generate(5, (_) => false);
     buttons[_currentTool.index] = true;
     return buttons;
   }
@@ -65,9 +69,9 @@ class _PaintPageState extends State<PaintPage> {
             setState(() {
               Paint paint = Paint()
                 ..color = _currentColor
-                ..blendMode = BlendMode.color
+                ..blendMode = BlendMode.src
                 ..style = PaintingStyle.stroke
-                ..strokeWidth = 5
+                ..strokeWidth = _stWidth
                 ..strokeCap = StrokeCap.round;
               _shapeUndoCache = [];
               switch (_currentTool) {
@@ -87,7 +91,7 @@ class _PaintPageState extends State<PaintPage> {
                           ..color = _currentColor
                           ..blendMode = BlendMode.color
                           ..style = PaintingStyle.stroke
-                          ..strokeWidth = 5
+                          ..strokeWidth = _stWidth
                           ..strokeCap = StrokeCap.round));
                   } else {
                     updateType = UpdateType.SetCenterPoint;
@@ -106,6 +110,26 @@ class _PaintPageState extends State<PaintPage> {
                   else
                     _shapeList.last.start = event.localPosition;
                   break;
+
+                case DrawingTool.Arrow:
+                  if (_shapeList.isEmpty ||
+                      (_shapeList.last.runtimeType != ArrowLine ||
+                          !_shapeList.last.hitZone(event.localPosition))) {
+                    updateType = UpdateType.SetEndPoint;
+                    _shapeList.add(ArrowLine(
+                        start: event.localPosition,
+                        paint: Paint()
+                          ..color = _currentColor
+                          ..blendMode = BlendMode.color
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = _stWidth
+                          ..strokeCap = StrokeCap.round));
+                  } else {
+                    updateType = UpdateType.SetCenterPoint;
+                  }
+
+                  break;
+
               }
             });
           },
@@ -153,6 +177,11 @@ class _PaintPageState extends State<PaintPage> {
                       ),
                       Icon(
                         Icons.text_fields,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                      Icon(
+                        Icons.arrow_upward,
                         size: 20,
                         color: Colors.white,
                       ),
@@ -276,10 +305,12 @@ class _PaintPageState extends State<PaintPage> {
                                   indexBtn++) {
                                 _strokeWidth[indexBtn] = indexBtn == index;
                               }
+                              _stWidth = pow(2, index).toDouble();
                             });
                           },
                           child: Ink(
                             child: Image(
+                              color: _strokeWidth[index] ? Color(0xff4D53E0) : null,
                               image: AssetImage('icons/line${index + 1}.png'),
                               height: 30,
                               width: 30,
