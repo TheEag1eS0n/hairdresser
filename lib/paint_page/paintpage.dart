@@ -39,6 +39,7 @@ class _PaintPageState extends State<PaintPage> {
     Colors.green,
   ];
   List<bool> _colorSelected = List<bool>.generate(18, (index) => index == 0);
+  List<bool> _strokeWidth = List<bool>.generate(5, (index) => index == 0);
 
   Color _currentColor = Colors.black;
   double _colorPanelHeight = 0;
@@ -64,6 +65,7 @@ class _PaintPageState extends State<PaintPage> {
             setState(() {
               Paint paint = Paint()
                 ..color = _currentColor
+                ..blendMode = BlendMode.color
                 ..style = PaintingStyle.stroke
                 ..strokeWidth = 5
                 ..strokeCap = StrokeCap.round;
@@ -83,6 +85,7 @@ class _PaintPageState extends State<PaintPage> {
                         start: event.localPosition,
                         paint: Paint()
                           ..color = _currentColor
+                          ..blendMode = BlendMode.color
                           ..style = PaintingStyle.stroke
                           ..strokeWidth = 5
                           ..strokeCap = StrokeCap.round));
@@ -126,7 +129,7 @@ class _PaintPageState extends State<PaintPage> {
           child: Container(
               padding: EdgeInsets.all(0),
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Color(0xff3d3d3d),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -136,25 +139,29 @@ class _PaintPageState extends State<PaintPage> {
                       Icon(
                         Icons.brush,
                         size: 20,
+                        color: Colors.white,
                       ),
                       Icon(
                         Icons.call,
                         size: 20,
+                        color: Colors.white,
                       ),
                       Icon(
                         Icons.cake,
                         size: 20,
+                        color: Colors.white,
                       ),
                       Icon(
                         Icons.text_fields,
                         size: 20,
+                        color: Colors.white,
                       ),
                     ],
                     isSelected: selected,
                     onPressed: (int index) {
                       setState(() {
                         _colorPanelHeight =
-                            DrawingTool.values[index] == _currentTool ? 100 : 0;
+                            DrawingTool.values[index] == _currentTool ? 150 : 0;
                         _currentTool = DrawingTool.values[index];
                       });
                     },
@@ -168,7 +175,10 @@ class _PaintPageState extends State<PaintPage> {
                   ButtonBar(
                     children: [
                       IconButton(
-                        icon: Icon(Icons.undo),
+                        icon: Icon(
+                          Icons.undo,
+                          color: Colors.white,
+                        ),
                         splashRadius: 15,
                         disabledColor: Colors.black.withOpacity(.5),
                         padding: new EdgeInsets.all(0),
@@ -183,7 +193,10 @@ class _PaintPageState extends State<PaintPage> {
                               },
                       ),
                       IconButton(
-                        icon: Icon(Icons.redo),
+                        icon: Icon(
+                          Icons.redo,
+                          color: Colors.white,
+                        ),
                         splashRadius: 20,
                         disabledColor: Colors.black.withOpacity(.5),
                         padding: new EdgeInsets.all(0),
@@ -200,18 +213,18 @@ class _PaintPageState extends State<PaintPage> {
         Positioned(
           bottom: 50,
           left: 0,
-          right: 0,
+          width: 200,
           child: AnimatedContainer(
             alignment: Alignment.centerLeft,
             duration: Duration(milliseconds: 500),
             curve: Curves.easeOut,
             height: _colorPanelHeight,
-            color: Colors.grey[200],
+            color: Color(0xff3d3d3d),
             padding: EdgeInsets.all(10),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Ink(
-                    width: 150,
                     height: 100,
                     child: GridView.count(
                       crossAxisCount: 6,
@@ -235,15 +248,41 @@ class _PaintPageState extends State<PaintPage> {
                             child: Container(
                               decoration: BoxDecoration(
                                 color: _colors[index % _colors.length],
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(3),
                                 border: Border.all(
                                     color: _colorSelected[index]
                                         ? Colors.white
-                                        : Colors.black,
-                                    width: 2),
+                                        : Colors.white,
+                                    width: 1),
                               ),
                               width: 10,
                               height: 10,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )),
+                Ink(
+                    height: 30,
+                    child: GridView.count(
+                      crossAxisCount: 5,
+                      children: List.generate(
+                        _strokeWidth.length,
+                        (index) => InkWell(
+                          onTap: () {
+                            setState(() {
+                              for (int indexBtn = 0;
+                                  indexBtn < _strokeWidth.length;
+                                  indexBtn++) {
+                                _strokeWidth[indexBtn] = indexBtn == index;
+                              }
+                            });
+                          },
+                          child: Ink(
+                            child: Image(
+                              image: AssetImage('icons/line${index + 1}.png'),
+                              height: 30,
+                              width: 30,
                             ),
                           ),
                         ),
@@ -283,6 +322,7 @@ class _PaintPageState extends State<PaintPage> {
                     start: position,
                     paint: Paint()
                       ..color = _currentColor
+                      ..blendMode = BlendMode.color
                       ..style = PaintingStyle.stroke
                       ..strokeWidth = 5
                       ..strokeCap = StrokeCap.round));
