@@ -1,25 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:hairdresser/paint_page/tools_list.dart';
 
-enum DrawingTool { Brush, Curve, Eraser, Text, Arrow }
+class BottomBar extends StatelessWidget {
+  final setTool;
+  final DrawingTool currentTool;
 
-class BottomBar extends StatefulWidget {
-  @override
-  _BottomBarState createState() => _BottomBarState();
-}
-
-class _BottomBarState extends State<BottomBar> {
-  DrawingTool get currentTool => _currentTool;
-
-  Color _currentColor = Colors.black;
-  DrawingTool _currentTool = DrawingTool.Brush;
-
-  Paint _paint = Paint()
-    ..color = Colors.black
-    ..strokeCap = StrokeCap.round;
+  const BottomBar({this.setTool, required this.currentTool});
 
   List<bool> get selected {
     var buttons = List.generate(5, (_) => false);
-    buttons[_currentTool.index] = true;
+    buttons[currentTool.index] = true;
     return buttons;
   }
 
@@ -63,16 +53,11 @@ class _BottomBarState extends State<BottomBar> {
             ],
             isSelected: selected,
             onPressed: (int index) {
-              setState(() {
-                _currentTool = DrawingTool.values[index];
-              });
+              print(index);
+              setTool(DrawingTool.values[index]);
             },
             constraints: BoxConstraints(minHeight: 50, minWidth: 50),
             renderBorder: false,
-            splashColor: _currentColor.withOpacity(0.25),
-            highlightColor: _currentColor.withOpacity(0.5),
-            selectedColor: _currentColor,
-            fillColor: _currentColor.withOpacity(0.1),
           ),
           ButtonBar(
             children: [

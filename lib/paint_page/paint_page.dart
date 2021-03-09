@@ -12,13 +12,14 @@ import 'package:hairdresser/paint_page/tools/brush.dart';
 import 'package:hairdresser/paint_page/tools/curve.dart';
 import 'package:hairdresser/paint_page/tools/erase.dart';
 import 'package:hairdresser/paint_page/tools/text.dart';
+import 'package:hairdresser/paint_page/tools_list.dart';
+
+import 'bottom_bar_v2.dart';
 
 class PaintPage extends StatefulWidget {
   @override
   _PaintPageState createState() => _PaintPageState();
 }
-
-enum DrawingTool { Brush, Curve, Eraser, Text, Arrow }
 
 class _PaintPageState extends State<PaintPage> {
   final textController = TextEditingController();
@@ -31,6 +32,13 @@ class _PaintPageState extends State<PaintPage> {
   }
 
   DrawingTool _currentTool = DrawingTool.Brush;
+
+  void setCurrentTool(DrawingTool tool) {
+    setState(() {
+      _currentTool = tool;
+    });
+  }
+
   UpdateType updateType = UpdateType.AddPoint;
   List<Tool> _shapeList = [];
   List<Tool> _shapeUndoCache = [];
@@ -52,12 +60,6 @@ class _PaintPageState extends State<PaintPage> {
   Color _currentColor = Colors.black;
   double _colorPanelHeight = 0;
   double _stWidth = 0;
-
-  List<bool> get selected {
-    var buttons = List.generate(5, (_) => false);
-    buttons[_currentTool.index] = true;
-    return buttons;
-  }
 
   void addRedoCache() {
     setState(() {
@@ -170,94 +172,7 @@ class _PaintPageState extends State<PaintPage> {
           bottom: 0,
           left: 0,
           right: 0,
-          child: Container(
-              padding: EdgeInsets.all(0),
-              decoration: BoxDecoration(
-                color: Color(0xff3d3d3d),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ToggleButtons(
-                    children: <Widget>[
-                      Icon(
-                        Icons.brush,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                      Icon(
-                        Icons.call,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                      Icon(
-                        Icons.cake,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                      Icon(
-                        Icons.text_fields,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                      Icon(
-                        Icons.arrow_upward,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ],
-                    isSelected: selected,
-                    onPressed: (int index) {
-                      setState(() {
-                        _colorPanelHeight =
-                            DrawingTool.values[index] == _currentTool ? 300 : 0;
-                        _currentTool = DrawingTool.values[index];
-                      });
-                    },
-                    constraints: BoxConstraints(minHeight: 50, minWidth: 50),
-                    renderBorder: false,
-                    splashColor: _currentColor.withOpacity(0.25),
-                    highlightColor: _currentColor.withOpacity(0.5),
-                    selectedColor: _currentColor,
-                    fillColor: _currentColor.withOpacity(0.1),
-                  ),
-                  ButtonBar(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.undo,
-                          color: Colors.white,
-                        ),
-                        splashRadius: 15,
-                        disabledColor: Colors.black.withOpacity(.5),
-                        padding: new EdgeInsets.all(0),
-                        constraints:
-                            BoxConstraints(minHeight: 30, minWidth: 30),
-                        onPressed: _shapeList.isEmpty
-                            ? null
-                            : () {
-                                setState(() {
-                                  _shapeUndoCache.add(_shapeList.removeLast());
-                                });
-                              },
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.redo,
-                          color: Colors.white,
-                        ),
-                        splashRadius: 20,
-                        disabledColor: Colors.black.withOpacity(.5),
-                        padding: new EdgeInsets.all(0),
-                        constraints:
-                            BoxConstraints(minHeight: 40, minWidth: 40),
-                        onPressed:
-                            _shapeUndoCache.isEmpty ? null : addRedoCache,
-                      ),
-                    ],
-                  )
-                ],
-              )),
+          child: BottomBar(setTool: setCurrentTool, currentTool: _currentTool),
         ),
         Positioned(
           bottom: 50,

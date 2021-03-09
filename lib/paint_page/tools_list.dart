@@ -1,0 +1,1 @@
+enum DrawingTool { Brush, Curve, Eraser, Text, Arrow }
