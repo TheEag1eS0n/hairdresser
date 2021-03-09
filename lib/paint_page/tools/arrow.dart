@@ -1,13 +1,20 @@
 import 'dart:math';
-import 'package:arrow_path/arrow_path.dart';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:hairdresser/paint_page/tool.dart';
 
+// ignore: import_of_legacy_library_into_null_safe
+import 'package:arrow_path/arrow_path.dart';
+
 class ArrowLine implements Tool {
   @override
-  late Offset start;
+  Offset start;
   @override
   late Offset end;
+
+  @override
+  late TextStyle textStyle;
+
   late Offset center;
 
   @override
@@ -17,19 +24,9 @@ class ArrowLine implements Tool {
   }
 
   @override
-  late Paint paint;
+  Paint paint;
 
-  @override
-  void update(Offset point, UpdateType updateType) {
-    switch (updateType) {
-      case UpdateType.SetEndPoint:
-        end = point;
-        center = (start + end) / 2;
-        break;
-      case UpdateType.SetCenterPoint:
-        center = point;
-    }
-  }
+
 
   Offset get centerOfBaseLine => (start + end) / 2;
   Offset get advancedPoint => centerOfBaseLine + (center - centerOfBaseLine) * 2;
@@ -39,7 +36,8 @@ class ArrowLine implements Tool {
     Path path = Path()
       ..moveTo(start.dx, start.dy)
       ..quadraticBezierTo(advancedPoint.dx, advancedPoint.dy, end.dx, end.dy);
-    path = ArrowPath.make(path: path, isDoubleSided: false, isAdjusted: false);
+    print(path.computeMetrics());
+        Path arrow = ArrowPath.make(path: path, isDoubleSided: false, isAdjusted: false);
     return path;
   }
   double distanceToLine(Offset p) {
@@ -63,4 +61,19 @@ class ArrowLine implements Tool {
   // TODO: implement textPainter
   TextPainter get textPainter => throw UnimplementedError();
 
+  @override
+  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle]) {
+    switch (updateType) {
+      case UpdateType.SetEndPoint:
+        end = point ?? end;
+        center = (start + end) / 2;
+        break;
+      case UpdateType.SetCenterPoint:
+        center = point ?? center;
+    }
+  }
+
+  @override
+  // TODO: implement text
+  String get text => throw UnimplementedError();
 }

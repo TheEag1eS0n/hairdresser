@@ -5,14 +5,18 @@ import 'package:hairdresser/paint_page/tool.dart';
 
 class Erase implements Tool {
   @override
-  late Offset start;
+  Offset start;
+
   @override
-  late Paint paint = Paint()
+  Paint paint = Paint()
     ..color = Colors.transparent
     ..blendMode = BlendMode.clear
     ..style = PaintingStyle.stroke
     ..strokeCap = StrokeCap.round
     ..strokeWidth = 20;
+
+  @override
+  late TextStyle textStyle;
 
   @override
   Erase({required this.start}) {
@@ -23,11 +27,6 @@ class Erase implements Tool {
   late Offset end;
 
   late List<Offset> points = [];
-
-  @override
-  void update(Offset point, UpdateType updateType) {
-    points.add(point);
-  }
 
   @override
   // TODO: implement path
@@ -46,6 +45,11 @@ class Erase implements Tool {
   }
 
   @override
-  // TODO: implement textPainter
-  TextPainter get textPainter => throw UnimplementedError();
+  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle]) {
+    points.add(point!);
+  }
+
+  @override
+  // TODO: implement text
+  String get text => throw UnimplementedError();
 }

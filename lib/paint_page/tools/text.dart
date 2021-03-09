@@ -13,13 +13,28 @@ class CanvasText implements Tool {
   @override
   Offset start;
 
-  late TextPainter _textPainter;
+  late String _text;
 
-  CanvasText({required String text, required this.start, required this.paint}) {
-    _textPainter = TextPainter(textDirection: TextDirection.ltr);
-    _textPainter.text = TextSpan(
-        text: text, style: TextStyle(fontSize: 16, color: paint.color));
-    _textPainter.layout();
+  String get text => _text;
+
+  set text(String text) {
+    _text = text;
+  }
+
+  TextStyle textStyle = TextStyle(
+    fontWeight: FontWeight.normal,
+    fontStyle: FontStyle.normal,
+    decoration: TextDecoration.none,
+    fontSize: 16,
+    color: Colors.black,
+  );
+
+  CanvasText({
+    required text,
+    required this.start,
+    required this.paint,
+  }) {
+    _text = text;
   }
 
   @override
@@ -31,7 +46,6 @@ class CanvasText implements Tool {
   // TODO: implement path
   Path get path {
     paint.strokeWidth = 1;
-    paint.color = Colors.transparent;
     Path path = Path()..moveTo(start.dx, start.dy);
     path.addRect(Rect.fromPoints(start,
         Offset(start.dx + textPainter.width, start.dy + textPainter.height)));
@@ -39,11 +53,22 @@ class CanvasText implements Tool {
   }
 
   @override
-  void update(Offset point, UpdateType updateType) {
-    start = point;
+  // TODO: implement textPainter
+  TextPainter get textPainter {
+    TextPainter textPainter = TextPainter(
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.text = TextSpan(
+      text: text,
+      style: textStyle,
+    );
+    textPainter.layout();
+    return textPainter;
   }
 
   @override
-  // TODO: implement textPainter
-  TextPainter get textPainter => _textPainter;
+  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle]) {
+    this.start = point ?? this.start;
+    this.textStyle = textStyle ?? this.textStyle;
+  }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hairdresser/paint_page/paintpage.dart';
+import 'package:hairdresser/paint_page/paint_page.dart';
 
 void main() => runApp(MyApp());
 

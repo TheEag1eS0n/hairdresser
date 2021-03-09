@@ -3,8 +3,9 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:hairdresser/paint_page/canvasPainter.dart';
+import 'package:hairdresser/paint_page/canvas_painter.dart';
 import 'package:hairdresser/paint_page/tool.dart';
 import 'package:hairdresser/paint_page/tools/arrow.dart';
 import 'package:hairdresser/paint_page/tools/brush.dart';
@@ -21,6 +22,8 @@ enum DrawingTool { Brush, Curve, Eraser, Text, Arrow }
 
 class _PaintPageState extends State<PaintPage> {
   final textController = TextEditingController();
+  final fontSize = TextEditingController()..text = '16';
+
   @override
   void dispose() {
     textController.dispose();
@@ -31,6 +34,7 @@ class _PaintPageState extends State<PaintPage> {
   UpdateType updateType = UpdateType.AddPoint;
   List<Tool> _shapeList = [];
   List<Tool> _shapeUndoCache = [];
+  List<Tool> _shapeTextList = [];
 
   List<Color> _colors = [
     Colors.black,
@@ -43,6 +47,7 @@ class _PaintPageState extends State<PaintPage> {
   ];
   List<bool> _colorSelected = List<bool>.generate(18, (index) => index == 0);
   List<bool> _strokeWidth = List<bool>.generate(5, (index) => index == 0);
+  List<bool> _fontStyleButtons = List<bool>.generate(3, (index) => false);
 
   Color _currentColor = Colors.black;
   double _colorPanelHeight = 0;
@@ -127,9 +132,7 @@ class _PaintPageState extends State<PaintPage> {
                   } else {
                     updateType = UpdateType.SetCenterPoint;
                   }
-
                   break;
-
               }
             });
           },
@@ -139,11 +142,28 @@ class _PaintPageState extends State<PaintPage> {
             });
           },
           onPanEnd: (event) {},
-          child: CustomPaint(
-            foregroundPainter: ShapesCanvas(shapes: _shapeList),
-            child: Center(
-              child: Image.asset('images/bg-head.png'),
-            ),
+          child: Stack(
+            children: [
+              CustomPaint(
+                foregroundPainter: ShapesCanvas(shapes: _shapeList),
+                child: Center(
+                  child: Image.asset('images/bg-head.png'),
+                ),
+              ),
+              Stack(
+                children: List.generate(
+                  _shapeTextList.length,
+                  (index) => Positioned(
+                    left: _shapeTextList[index].start.dx,
+                    top: _shapeTextList[index].start.dy,
+                    child: Text(
+                      _shapeTextList[index].text,
+                      style: _shapeTextList[index].textStyle,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         Positioned(
@@ -190,7 +210,7 @@ class _PaintPageState extends State<PaintPage> {
                     onPressed: (int index) {
                       setState(() {
                         _colorPanelHeight =
-                            DrawingTool.values[index] == _currentTool ? 150 : 0;
+                            DrawingTool.values[index] == _currentTool ? 300 : 0;
                         _currentTool = DrawingTool.values[index];
                       });
                     },
@@ -291,34 +311,182 @@ class _PaintPageState extends State<PaintPage> {
                         ),
                       ),
                     )),
-                Ink(
-                    height: 30,
-                    child: GridView.count(
-                      crossAxisCount: 5,
-                      children: List.generate(
-                        _strokeWidth.length,
-                        (index) => InkWell(
-                          onTap: () {
-                            setState(() {
-                              for (int indexBtn = 0;
-                                  indexBtn < _strokeWidth.length;
-                                  indexBtn++) {
-                                _strokeWidth[indexBtn] = indexBtn == index;
-                              }
-                              _stWidth = pow(2, index).toDouble();
-                            });
-                          },
-                          child: Ink(
-                            child: Image(
-                              color: _strokeWidth[index] ? Color(0xff4D53E0) : null,
-                              image: AssetImage('icons/line${index + 1}.png'),
-                              height: 30,
-                              width: 30,
+                if (_currentTool == DrawingTool.Text)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            alignment: AlignmentDirectional.centerStart,
+                            height: 40,
+                            width: 20,
+                            child: Text(
+                              'Aa',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 40,
+                            width: 75,
+                            child: TextField(
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                              controller: fontSize,
+                              maxLines: 1,
+                              decoration: InputDecoration(
+                                focusColor: Colors.white,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    style: BorderStyle.solid,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                  borderSide: BorderSide(
+                                    width: 1,
+                                    style: BorderStyle.solid,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              onSubmitted: (_) {
+                                setState(() {
+                                  if (_shapeList.last.runtimeType ==
+                                      CanvasText) {
+                                    // _shapeList.last.update(
+                                    //   null,
+                                    //   UpdateType.AddPoint,
+                                    //   null,
+                                    //   TextStyle(
+                                    //     fontSize: double.parse(fontSize.text),
+                                    //     fontWeight: _fontStyleButtons[0]
+                                    //         ? FontWeight.bold
+                                    //         : FontWeight.normal,
+                                    //     fontStyle: _fontStyleButtons[1]
+                                    //         ? FontStyle.italic
+                                    //         : FontStyle.normal,
+                                    //     decoration: _fontStyleButtons[2]
+                                    //         ? TextDecoration.underline
+                                    //         : TextDecoration.none,
+                                    //   ),
+                                    // );
+                                    _shapeTextList.last.update(
+                                      null,
+                                      UpdateType.AddPoint,
+                                      null,
+                                      TextStyle(
+                                        fontSize: double.parse(fontSize.text),
+                                        fontWeight: _fontStyleButtons[0]
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                        fontStyle: _fontStyleButtons[1]
+                                            ? FontStyle.italic
+                                            : FontStyle.normal,
+                                        decoration: _fontStyleButtons[2]
+                                            ? TextDecoration.underline
+                                            : TextDecoration.none,
+                                      ),
+                                    );
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      ToggleButtons(
+                        children: [
+                          Icon(
+                            Icons.format_bold,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                          Icon(
+                            Icons.format_italic,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                          Icon(
+                            Icons.format_underline,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                        ],
+                        constraints:
+                            BoxConstraints(minHeight: 20, minWidth: 20),
+                        renderBorder: false,
+                        isSelected: _fontStyleButtons,
+                        onPressed: (int index) {
+                          setState(() {
+                            _fontStyleButtons[index] =
+                                !_fontStyleButtons[index];
+                            if (_shapeList.last.runtimeType == CanvasText) {
+                              _shapeList.last.update(
+                                null,
+                                UpdateType.AddPoint,
+                                null,
+                                TextStyle(
+                                  fontSize: double.parse(fontSize.text),
+                                  fontWeight: _fontStyleButtons[0]
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  fontStyle: _fontStyleButtons[1]
+                                      ? FontStyle.italic
+                                      : FontStyle.normal,
+                                  decoration: _fontStyleButtons[2]
+                                      ? TextDecoration.underline
+                                      : TextDecoration.none,
+                                ),
+                              );
+                            }
+                          });
+                        },
+                      )
+                    ],
+                  )
+                else
+                  Ink(
+                      height: 30,
+                      child: GridView.count(
+                        crossAxisCount: 5,
+                        children: List.generate(
+                          _strokeWidth.length,
+                          (index) => InkWell(
+                            onTap: () {
+                              setState(() {
+                                for (int indexBtn = 0;
+                                    indexBtn < _strokeWidth.length;
+                                    indexBtn++) {
+                                  _strokeWidth[indexBtn] = indexBtn == index;
+                                }
+                                _stWidth = pow(2, index).toDouble();
+                              });
+                            },
+                            child: Ink(
+                              child: Image(
+                                color: _strokeWidth[index]
+                                    ? Color(0xff4D53E0)
+                                    : null,
+                                image: AssetImage('icons/line${index + 1}.png'),
+                                height: 30,
+                                width: 30,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    )),
+                      )),
               ],
             ),
           ),
@@ -331,7 +499,7 @@ class _PaintPageState extends State<PaintPage> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('Что хотите написать'),
+        title: Text('Что хотите написать?'),
         content: Form(
           child: TextFormField(
             controller: textController,
@@ -357,6 +525,7 @@ class _PaintPageState extends State<PaintPage> {
                       ..style = PaintingStyle.stroke
                       ..strokeWidth = 5
                       ..strokeCap = StrokeCap.round));
+                _shapeTextList.add(_shapeList.last);
               });
             },
             child: Text('SUBMIT'),

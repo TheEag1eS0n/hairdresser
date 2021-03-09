@@ -9,17 +9,18 @@ enum UpdateType {
 }
 
 abstract class Tool {
-  late Offset start;
-  late Offset end;
+  Offset start;
+  Paint paint;
 
-  late Paint paint;
+  late Offset end;
+  late TextStyle textStyle;
 
   Tool({required this.start, required this.paint});
 
-  void update(Offset point, UpdateType updateType);
+  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle]);
 
   Path get path;
-  TextPainter get textPainter;
+  String get text;
 
   bool hitZone(tap);
 }

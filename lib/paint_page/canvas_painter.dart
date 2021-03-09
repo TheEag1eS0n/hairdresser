@@ -13,8 +13,6 @@ class ShapesCanvas extends CustomPainter {
     canvas.saveLayer(Rect.fromLTWH(0, 0, size.width, size.height), Paint());
     if (shapes.isNotEmpty) {
       shapes.forEach((shape) {
-        if (shape.runtimeType == CanvasText)
-          shape.textPainter.paint(canvas, shape.start);
         canvas.drawPath(shape.path, shape.paint);
       });
     }
