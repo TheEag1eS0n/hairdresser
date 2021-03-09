@@ -52,8 +52,6 @@ class CanvasText implements Tool {
     return path;
   }
 
-  @override
-  // TODO: implement textPainter
   TextPainter get textPainter {
     TextPainter textPainter = TextPainter(
       textDirection: TextDirection.ltr,

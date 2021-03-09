@@ -53,7 +53,6 @@ class BottomBar extends StatelessWidget {
             ],
             isSelected: selected,
             onPressed: (int index) {
-              print(index);
               setTool(DrawingTool.values[index]);
             },
             constraints: BoxConstraints(minHeight: 50, minWidth: 50),

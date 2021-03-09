@@ -1,27 +1,31 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hairdresser/paint_page/tools_list.dart';
 
 class ColorPanel extends StatelessWidget {
+  final setStyle;
+  final currentTool;
+  final currentStyle;
 
-  final setColor;
-  final Color currentColor;
-
-  const ColorPanel({this.setColor, required this.currentColor});
+  ColorPanel({this.setStyle, this.currentStyle, this.currentTool});
 
   List<Color> get colors => [
-    Colors.black,
-    Colors.red,
-    Colors.blue,
-    Colors.lime,
-    Colors.indigo,
-    Colors.cyan,
-    Colors.green,
-  ];
+        Colors.black,
+        Colors.red,
+        Colors.blue,
+        Colors.lime,
+        Colors.indigo,
+        Colors.cyan,
+        Colors.green,
+      ];
 
-  List<bool> get selected {
-    var buttons = List.generate(18, (_) => false);
-    buttons[0] = true;
-    return buttons;
-  }
+  final fontSize = TextEditingController()..text = '16';
+
+  List<bool> get fontStyleSelected => List.generate(3, (_) => false);
+  List<bool> get selected => List.generate(18, (index) => colors.indexOf(currentStyle.color) == index);
+  List<bool> get brushSizeSelected => List.generate(5, (index) => currentStyle.strokeWidth == pow(2, index));
 
   @override
   Widget build(BuildContext context) {
@@ -43,17 +47,18 @@ class ColorPanel extends StatelessWidget {
                 mainAxisSpacing: 5,
                 children: List.generate(
                   selected.length,
-                      (index) => InkWell(
-                    onTap: () => setColor(colors[index]),
+                  (index) => InkWell(
+                    onTap: () {
+                      setStyle(colors[index % colors.length]);
+                    },
                     child: Ink(
                       child: Container(
                         decoration: BoxDecoration(
                           color: colors[index % colors.length],
                           borderRadius: BorderRadius.circular(3),
                           border: Border.all(
-                              color: selected[index]
-                                  ? Colors.white
-                                  : Colors.white,
+                              color:
+                                  selected[index] ? Colors.amber : Colors.white,
                               width: 1),
                         ),
                         width: 10,
@@ -63,7 +68,7 @@ class ColorPanel extends StatelessWidget {
                   ),
                 ),
               )),
-          if (_currentTool == DrawingTool.Text)
+          if (currentTool == DrawingTool.Text)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -85,6 +90,10 @@ class ColorPanel extends StatelessWidget {
                       height: 40,
                       width: 75,
                       child: TextField(
+                        onSubmitted: (value) {
+                          // setStyle(double.parse(source));
+                          print(value);
+                        },
                         style: TextStyle(
                           color: Colors.white,
                         ),
@@ -113,47 +122,6 @@ class ColorPanel extends StatelessWidget {
                             ),
                           ),
                         ),
-                        onSubmitted: (_) {
-                          setState(() {
-                            if (_shapeList.last.runtimeType ==
-                                CanvasText) {
-                              // _shapeList.last.update(
-                              //   null,
-                              //   UpdateType.AddPoint,
-                              //   null,
-                              //   TextStyle(
-                              //     fontSize: double.parse(fontSize.text),
-                              //     fontWeight: _fontStyleButtons[0]
-                              //         ? FontWeight.bold
-                              //         : FontWeight.normal,
-                              //     fontStyle: _fontStyleButtons[1]
-                              //         ? FontStyle.italic
-                              //         : FontStyle.normal,
-                              //     decoration: _fontStyleButtons[2]
-                              //         ? TextDecoration.underline
-                              //         : TextDecoration.none,
-                              //   ),
-                              // );
-                              _shapeTextList.last.update(
-                                null,
-                                UpdateType.AddPoint,
-                                null,
-                                TextStyle(
-                                  fontSize: double.parse(fontSize.text),
-                                  fontWeight: _fontStyleButtons[0]
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                  fontStyle: _fontStyleButtons[1]
-                                      ? FontStyle.italic
-                                      : FontStyle.normal,
-                                  decoration: _fontStyleButtons[2]
-                                      ? TextDecoration.underline
-                                      : TextDecoration.none,
-                                ),
-                              );
-                            }
-                          });
-                        },
                       ),
                     ),
                   ],
@@ -176,34 +144,16 @@ class ColorPanel extends StatelessWidget {
                       color: Colors.white,
                     ),
                   ],
-                  constraints:
-                  BoxConstraints(minHeight: 20, minWidth: 20),
+                  constraints: BoxConstraints(minHeight: 20, minWidth: 20),
                   renderBorder: false,
-                  isSelected: _fontStyleButtons,
+                  isSelected: fontStyleSelected,
                   onPressed: (int index) {
-                    setState(() {
-                      _fontStyleButtons[index] =
-                      !_fontStyleButtons[index];
-                      if (_shapeList.last.runtimeType == CanvasText) {
-                        _shapeList.last.update(
-                          null,
-                          UpdateType.AddPoint,
-                          null,
-                          TextStyle(
-                            fontSize: double.parse(fontSize.text),
-                            fontWeight: _fontStyleButtons[0]
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                            fontStyle: _fontStyleButtons[1]
-                                ? FontStyle.italic
-                                : FontStyle.normal,
-                            decoration: _fontStyleButtons[2]
-                                ? TextDecoration.underline
-                                : TextDecoration.none,
-                          ),
-                        );
-                      }
-                    });
+                    fontStyleSelected[index] = !fontStyleSelected[index];
+                    setStyle(
+                      fontStyleSelected[0]?FontWeight.bold:null,
+                      fontStyleSelected[1]?FontStyle.italic:null,
+                      fontStyleSelected[0]?TextDecoration.underline:null,
+                    );
                   },
                 )
               ],
@@ -214,23 +164,14 @@ class ColorPanel extends StatelessWidget {
                 child: GridView.count(
                   crossAxisCount: 5,
                   children: List.generate(
-                    _strokeWidth.length,
-                        (index) => InkWell(
+                    5,
+                    (index) => InkWell(
                       onTap: () {
-                        setState(() {
-                          for (int indexBtn = 0;
-                          indexBtn < _strokeWidth.length;
-                          indexBtn++) {
-                            _strokeWidth[indexBtn] = indexBtn == index;
-                          }
-                          _stWidth = pow(2, index).toDouble();
-                        });
+                        setStyle(pow(2, index));
                       },
                       child: Ink(
                         child: Image(
-                          color: _strokeWidth[index]
-                              ? Color(0xff4D53E0)
-                              : null,
+                          color: Color(0xff4D53E0),
                           image: AssetImage('icons/line${index + 1}.png'),
                           height: 30,
                           width: 30,
