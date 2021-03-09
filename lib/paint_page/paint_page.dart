@@ -1,10 +1,7 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:hairdresser/paint_page/canvas_painter.dart';
 import 'package:hairdresser/paint_page/tool.dart';
 import 'package:hairdresser/paint_page/tools/arrow.dart';
