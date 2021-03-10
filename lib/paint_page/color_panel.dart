@@ -4,28 +4,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hairdresser/paint_page/tools_list.dart';
 
-class ColorPanel extends StatelessWidget {
+class ColorPanel extends StatefulWidget {
   final setStyle;
   final currentTool;
-  final currentStyle;
 
-  ColorPanel({this.setStyle, this.currentStyle, this.currentTool});
+  ColorPanel({this.setStyle, this.currentTool});
 
-  List<Color> get colors => [
-        Colors.black,
-        Colors.red,
-        Colors.blue,
-        Colors.lime,
-        Colors.indigo,
-        Colors.cyan,
-        Colors.green,
-      ];
 
+  @override
+  _ColorPanelState createState() => _ColorPanelState();
+}
+
+class _ColorPanelState extends State<ColorPanel> {
   final fontSize = TextEditingController()..text = '16';
 
-  List<bool> get fontStyleSelected => List.generate(3, (_) => false);
-  List<bool> get selected => List.generate(18, (index) => colors.indexOf(currentStyle.color) == index);
-  List<bool> get brushSizeSelected => List.generate(5, (index) => currentStyle.strokeWidth == pow(2, index));
+  List<bool> fontStyleSelected = List.generate(3, (index) => false);
+  List<bool> selected = List.generate(18, (index) => index == 0);
+  List<bool> brushSizeSelected = List.generate(5, (index) => index == 0);
+
+  List<Color> colors = [
+    Colors.black,
+    Colors.red,
+    Colors.blue,
+    Colors.lime,
+    Colors.indigo,
+    Colors.cyan,
+    Colors.green,
+  ];
+
+  get setStyle => widget.setStyle;
+  DrawingTool get currentTool => widget.currentTool;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +57,12 @@ class ColorPanel extends StatelessWidget {
                   selected.length,
                   (index) => InkWell(
                     onTap: () {
-                      setStyle(colors[index % colors.length]);
+                      setState(() {
+                        for (int i = 0; i < selected.length; i++)
+                          selected[i] = i == index;
+                        print(selected);
+                      });
+                      widget.setStyle(color: colors[index % colors.length]);
                     },
                     child: Ink(
                       child: Container(
@@ -91,8 +104,10 @@ class ColorPanel extends StatelessWidget {
                       width: 75,
                       child: TextField(
                         onSubmitted: (value) {
-                          // setStyle(double.parse(source));
-                          print(value);
+                          setState(() {
+                            fontSize.text = value;
+                          });
+                          setStyle(fontSize: double.parse(value));
                         },
                         style: TextStyle(
                           color: Colors.white,
@@ -147,12 +162,16 @@ class ColorPanel extends StatelessWidget {
                   constraints: BoxConstraints(minHeight: 20, minWidth: 20),
                   renderBorder: false,
                   isSelected: fontStyleSelected,
-                  onPressed: (int index) {
-                    fontStyleSelected[index] = !fontStyleSelected[index];
+                  selectedColor: Colors.black.withOpacity(0.5),
+                  onPressed: (index) {
+                    setState(() {
+                      fontStyleSelected[index] = !fontStyleSelected[index];
+                    });
+                    print(index);
                     setStyle(
-                      fontStyleSelected[0]?FontWeight.bold:null,
-                      fontStyleSelected[1]?FontStyle.italic:null,
-                      fontStyleSelected[0]?TextDecoration.underline:null,
+                        fontWeight: fontStyleSelected[0]?FontWeight.bold:FontWeight.normal,
+                        fontStyle: fontStyleSelected[1]?FontStyle.italic:FontStyle.normal,
+                        decoration: fontStyleSelected[2]?TextDecoration.underline:TextDecoration.none,
                     );
                   },
                 )

@@ -21,18 +21,13 @@ class CanvasText implements Tool {
     _text = text;
   }
 
-  TextStyle textStyle = TextStyle(
-    fontWeight: FontWeight.normal,
-    fontStyle: FontStyle.normal,
-    decoration: TextDecoration.none,
-    fontSize: 16,
-    color: Colors.black,
-  );
+  TextStyle textStyle;
 
   CanvasText({
     required text,
     required this.start,
     required this.paint,
+    required this.textStyle,
   }) {
     _text = text;
   }

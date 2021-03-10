@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hairdresser/paint_page/canvas_painter.dart';
 import 'package:hairdresser/paint_page/color_panel.dart';
 import 'package:hairdresser/paint_page/tool.dart';
@@ -30,10 +27,10 @@ class _PaintPageState extends State<PaintPage> {
 
   DrawingTool _currentTool = DrawingTool.Brush;
   Paint _currentPaint = Paint()
-  ..color = Colors.black
-  ..strokeCap = StrokeCap.round
-  ..strokeWidth = 4
-  ..style = PaintingStyle.stroke;
+    ..color = Colors.black
+    ..strokeCap = StrokeCap.round
+    ..strokeWidth = 4
+    ..style = PaintingStyle.stroke;
 
   TextStyle _textStyle = TextStyle(
     color: Colors.black,
@@ -48,20 +45,34 @@ class _PaintPageState extends State<PaintPage> {
       _currentTool = tool;
     });
   }
-  void setCurrentPaint([Color? color, double? strokeWidth]) {
+
+  void setCurrentTextStyle(
+      {Color? color,
+      double? fontSize,
+      FontWeight? fontWeight,
+      FontStyle? fontStyle,
+      TextDecoration? decoration}) {
     setState(() {
-      _currentPaint.color = color?? _currentPaint.color;
-      _currentPaint.strokeWidth = strokeWidth?? _currentPaint.strokeWidth;
-    });
-  }
-  void setCurrentTextStyle([double? fontSize, FontWeight? fontWeight, FontStyle? fontStyle, TextDecoration? decoration]) {
-    setState(() {
-      _textStyle.merge(TextStyle(
+      _textStyle = _textStyle.merge(TextStyle(
         fontSize: fontSize,
-        fontWeight: fontWeight,
+        color: color?? _currentPaint.color,
         fontStyle: fontStyle,
+        fontWeight: fontWeight,
         decoration: decoration,
       ));
+      _currentPaint.color = color?? _currentPaint.color;
+      if (_shapeList.isNotEmpty && _shapeList.last.runtimeType == CanvasText)
+        _shapeList.last.update(null, null, null, _textStyle);
+    });
+  }
+
+  void setCurrentPaint({Color? color, double? strokeWidth}) {
+    setState(() {
+      _currentPaint.color = color!;
+      _textStyle = _textStyle.merge(TextStyle(
+        color: color,
+      ));
+      _currentPaint.strokeWidth = strokeWidth ?? _currentPaint.strokeWidth;
     });
   }
 
@@ -96,9 +107,8 @@ class _PaintPageState extends State<PaintPage> {
                       (_shapeList.last.runtimeType != CurveLine ||
                           !_shapeList.last.hitZone(event.localPosition))) {
                     updateType = UpdateType.SetEndPoint;
-                    _shapeList.add(CurveLine(
-                        start: event.localPosition,
-                        paint: paint));
+                    _shapeList.add(
+                        CurveLine(start: event.localPosition, paint: paint));
                   } else {
                     updateType = UpdateType.SetCenterPoint;
                   }
@@ -122,9 +132,8 @@ class _PaintPageState extends State<PaintPage> {
                       (_shapeList.last.runtimeType != ArrowLine ||
                           !_shapeList.last.hitZone(event.localPosition))) {
                     updateType = UpdateType.SetEndPoint;
-                    _shapeList.add(ArrowLine(
-                        start: event.localPosition,
-                        paint: paint));
+                    _shapeList.add(
+                        ArrowLine(start: event.localPosition, paint: paint));
                   } else {
                     updateType = UpdateType.SetCenterPoint;
                   }
@@ -178,8 +187,9 @@ class _PaintPageState extends State<PaintPage> {
           height: 200,
           child: ColorPanel(
             currentTool: _currentTool,
-            currentStyle: _currentTool != DrawingTool.Text ? _currentPaint : _textStyle,
-            setStyle: _currentTool != DrawingTool.Text ? setCurrentPaint : setCurrentTextStyle,
+            setStyle: _currentTool != DrawingTool.Text
+                ? setCurrentPaint
+                : setCurrentTextStyle,
           ),
         ),
       ],
@@ -210,7 +220,8 @@ class _PaintPageState extends State<PaintPage> {
                 _shapeList.add(CanvasText(
                     text: textController.text,
                     start: position,
-                    paint: _currentPaint));
+                    paint: _currentPaint,
+                    textStyle: _textStyle));
                 _shapeTextList.add(_shapeList.last);
               });
             },
