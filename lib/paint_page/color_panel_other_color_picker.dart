@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:hairdresser/paint_page/tools_list.dart';
 
 class ColorPanel extends StatefulWidget {
@@ -144,13 +144,12 @@ class _ColorPanelState extends State<ColorPanel> {
                             horizontal: 3,
                           ),
                           decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.white,
-                              style: BorderStyle.solid,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(3)
-                          ),
+                              border: Border.all(
+                                color: Colors.white,
+                                style: BorderStyle.solid,
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(3)),
                           child: TextField(
                             onSubmitted: (value) {
                               setState(() {
@@ -168,7 +167,6 @@ class _ColorPanelState extends State<ColorPanel> {
                             ],
                             controller: fontSize,
                             maxLines: 1,
-
                             decoration: InputDecoration.collapsed(
                               hintText: '',
                             ),
@@ -253,42 +251,29 @@ class _ColorPanelState extends State<ColorPanel> {
         ),
         AnimatedContainer(
           height: currentTool == DrawingTool.Eraser ? 0 : 200,
-          width: showColorPicker ? 200 : 0,
+          width: showColorPicker ? 500 : 0,
           color: Color(0xff3d3d3d),
           duration: Duration(milliseconds: 500),
           alignment: AlignmentDirectional.topCenter,
           padding: EdgeInsets.all(10),
-          child: ListView(
-            clipBehavior: Clip.none,
+          child: Column(
             children: [
-              ColorPicker(
-                color: customColor == Colors.transparent
-                    ? Colors.red
-                    : customColor,
-                enableShadesSelection: false,
-                pickersEnabled: {
-                  ColorPickerType.both: false,
-                  ColorPickerType.primary: false,
-                  ColorPickerType.accent: false,
-                  ColorPickerType.bw: false,
-                  ColorPickerType.custom: false,
-                  ColorPickerType.wheel: true,
-                },
-                spacing: 10,
-                wheelDiameter: 100,
-                onColorChanged: (color) {
-                  setState(() {
-                    customColor = color;
-                  });
-                },
+              SizedBox(
+                width: 400,
+                height: 150,
+                child: ColorPicker(
+                  paletteType: PaletteType.hsv,
+                  onColorChanged: (color) {
+                    setState(() {
+                      customColor = color;
+                    });
+                  },
+                  pickerColor: customColor,
+                  displayThumbColor: true,
+                  showLabel: false,
+                ),
               ),
-              MaterialButton(
-                  color: customColor == Colors.transparent
-                      ? Colors.red
-                      : customColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+              OutlinedButton(
                   onPressed: () {
                     setState(() {
                       colors[item] = customColor == Colors.transparent
@@ -298,7 +283,8 @@ class _ColorPanelState extends State<ColorPanel> {
                       customColor = Colors.transparent;
                       setStyle(color: colors[item]);
                     });
-                  })
+                  }, child: Text('SUBMIT'),
+              ),
             ],
           ),
         ),

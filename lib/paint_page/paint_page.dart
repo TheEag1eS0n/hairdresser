@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hairdresser/paint_page/canvas_painter.dart';
-import 'package:hairdresser/paint_page/color_panel.dart';
+import 'package:hairdresser/paint_page/color_panel_other_color_picker.dart';
 import 'package:hairdresser/paint_page/tool.dart';
 import 'package:hairdresser/paint_page/tools/arrow.dart';
 import 'package:hairdresser/paint_page/tools/brush.dart';
