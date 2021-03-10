@@ -19,8 +19,9 @@ class _ColorPanelState extends State<ColorPanel> {
   final fontSize = TextEditingController()..text = '16';
 
   List<bool> fontStyleSelected = List.generate(3, (index) => false);
-  List<bool> selected = List.generate(18, (index) => index == 0);
+  List<bool> selected = List.generate(18, (index) => false);
   List<bool> brushSizeSelected = List.generate(5, (index) => index == 0);
+  List<bool> dashedBrushSizeSelected = List.generate(2, (index) => false);
 
   List<Color> colors = [
     Colors.white,
@@ -215,6 +216,74 @@ class _ColorPanelState extends State<ColorPanel> {
                     )
                   ],
                 )
+              else if (currentTool == DrawingTool.Curve ||
+                  currentTool == DrawingTool.Arrow)
+                Wrap(
+                  children: [
+                    Ink(
+                      height: 25,
+                      child: GridView.count(
+                        crossAxisCount: 5,
+                        children: List.generate(
+                          5,
+                          (index) => InkWell(
+                            child: Ink(
+                              child: Image(
+                                color: brushSizeSelected[index]
+                                    ? Color(0xff4D53E0)
+                                    : Colors.white,
+                                image: AssetImage('icons/line${index + 1}.png'),
+                                height: 30,
+                                width: 30,
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                for (int i = 0;
+                                    i < brushSizeSelected.length;
+                                    i++) {
+                                  brushSizeSelected[i] = i == index;
+                                }
+                              });
+                              setStyle(strokeWidth: pow(2, ++index).toDouble());
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    Ink(
+                      height: 25,
+                      child: GridView.count(
+                        crossAxisCount: 5,
+                        children: List.generate(
+                          2,
+                          (index) => InkWell(
+                            child: Ink(
+                              child: Image(
+                                color: dashedBrushSizeSelected[index]
+                                    ? Color(0xff4D53E0)
+                                    : Colors.white,
+                                image: AssetImage('icons/line${index + 1}.png'),
+                                height: 30,
+                                width: 30,
+                              ),
+                            ),
+                            onTap: () {
+                              setState(() {
+                                for (int i = 0;
+                                    i < dashedBrushSizeSelected.length;
+                                    i++) {
+                                  dashedBrushSizeSelected[i] = i == index && !dashedBrushSizeSelected[i];
+                                }
+                              });
+                              setStyle(dashArray: dashedBrushSizeSelected[0] ? [1.0, 1.0] : dashedBrushSizeSelected[1] ? [1.0, 2.0] : []);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               else
                 Ink(
                     height: 25,
@@ -274,16 +343,17 @@ class _ColorPanelState extends State<ColorPanel> {
                 ),
               ),
               OutlinedButton(
-                  onPressed: () {
-                    setState(() {
-                      colors[item] = customColor == Colors.transparent
-                          ? Colors.red
-                          : customColor;
-                      showColorPicker = false;
-                      customColor = Colors.transparent;
-                      setStyle(color: colors[item]);
-                    });
-                  }, child: Text('SUBMIT'),
+                onPressed: () {
+                  setState(() {
+                    colors[item] = customColor == Colors.transparent
+                        ? Colors.red
+                        : customColor;
+                    showColorPicker = false;
+                    customColor = Colors.transparent;
+                    setStyle(color: colors[item]);
+                  });
+                },
+                child: Text('SUBMIT'),
               ),
             ],
           ),

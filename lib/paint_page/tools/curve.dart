@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hairdresser/paint_page/tool.dart';
+import 'package:path_drawing/path_drawing.dart';
 
 class CurveLine implements Tool {
   @override
@@ -12,8 +13,10 @@ class CurveLine implements Tool {
 
   late Offset center;
 
+  List<double> dashedArray;
+
   @override
-  CurveLine({required this.start, required this.paint}) {
+  CurveLine({required this.start, required this.paint, required this.dashedArray}) {
     end = start;
     center = (start + end) / 2;
   }
@@ -25,9 +28,14 @@ class CurveLine implements Tool {
   Offset get advancedPoint => centerOfBaseLine + (center - centerOfBaseLine) * 2;
 
   @override
-  Path get path => Path()
-    ..moveTo(start.dx, start.dy)
-    ..quadraticBezierTo(advancedPoint.dx, advancedPoint.dy, end.dx, end.dy);
+  Path get path {
+    Path path = Path()
+      ..moveTo(start.dx, start.dy)
+      ..quadraticBezierTo(advancedPoint.dx, advancedPoint.dy, end.dx, end.dy);
+
+    return dashPath(path, dashArray: CircularIntervalList<double>(dashedArray));
+  }
+
 
   double distanceToLine(Offset p) {
     double dx = (p.dx - start.dx) * (end.dx - start.dx);

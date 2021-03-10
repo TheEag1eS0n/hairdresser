@@ -26,6 +26,8 @@ class _PaintPageState extends State<PaintPage> {
   }
 
   DrawingTool _currentTool = DrawingTool.Brush;
+  List<double> _currendDashArray = [1.0];
+
   Paint _currentPaint = Paint()
     ..color = Colors.black
     ..strokeCap = StrokeCap.round
@@ -66,13 +68,17 @@ class _PaintPageState extends State<PaintPage> {
     });
   }
 
-  void setCurrentPaint({Color? color, double? strokeWidth}) {
+  void setCurrentPaint({Color? color, double? strokeWidth, List<double>? dashArray,}) {
     setState(() {
       _currentPaint.color = color?? _currentPaint.color;
       _textStyle = _textStyle.merge(TextStyle(
         color: color,
       ));
       _currentPaint.strokeWidth = strokeWidth ?? _currentPaint.strokeWidth;
+      dashArray![0] *= _currentPaint.strokeWidth;
+      dashArray[1] *= _currentPaint.strokeWidth;
+
+      _currendDashArray = dashArray;
     });
   }
 
@@ -112,7 +118,11 @@ class _PaintPageState extends State<PaintPage> {
                           !_shapeList.last.hitZone(event.localPosition))) {
                     updateType = UpdateType.SetEndPoint;
                     _shapeList.add(
-                        CurveLine(start: event.localPosition, paint: paint));
+                        CurveLine(
+                            start: event.localPosition,
+                            paint: paint,
+                            dashedArray: _currendDashArray,
+                        ));
                   } else {
                     updateType = UpdateType.SetCenterPoint;
                   }

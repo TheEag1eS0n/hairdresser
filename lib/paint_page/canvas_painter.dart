@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:hairdresser/paint_page/tool.dart';
-import 'package:hairdresser/paint_page/tools/text.dart';
 
 class ShapesCanvas extends CustomPainter {
   List<Tool> shapes;
