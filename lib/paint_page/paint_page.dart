@@ -165,9 +165,8 @@ class _PaintPageState extends State<PaintPage> {
                   (index) => Positioned(
                     left: _shapeTextList[index].start.dx,
                     top: _shapeTextList[index].start.dy,
-                    child: TextField(
-
-                      // _shapeTextList[index].text,
+                    child: Text(
+                      _shapeTextList[index].text,
                       style: _shapeTextList[index].textStyle,
                     ),
                   ),
@@ -232,6 +231,19 @@ class _PaintPageState extends State<PaintPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class BottomSheet extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      child: Container(
+        height: 200,
+        color: Colors.amber,
+      ),
+      onTap: () => Navigator.pop(context),
     );
   }
 }
