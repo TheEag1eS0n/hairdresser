@@ -41,7 +41,7 @@ class _ColorPanelState extends State<ColorPanel> {
       alignment: Alignment.centerLeft,
       duration: Duration(milliseconds: 500),
       curve: Curves.easeOut,
-      height: 300,
+      height: currentTool == DrawingTool.Eraser? 0:300,
       color: Color(0xff3d3d3d),
       padding: EdgeInsets.all(10),
       child: Column(
@@ -60,9 +60,8 @@ class _ColorPanelState extends State<ColorPanel> {
                       setState(() {
                         for (int i = 0; i < selected.length; i++)
                           selected[i] = i == index;
-                        print(selected);
                       });
-                      widget.setStyle(color: colors[index % colors.length]);
+                      setStyle(color: colors[index % colors.length]);
                     },
                     child: Ink(
                       child: Container(
@@ -167,7 +166,6 @@ class _ColorPanelState extends State<ColorPanel> {
                     setState(() {
                       fontStyleSelected[index] = !fontStyleSelected[index];
                     });
-                    print(index);
                     setStyle(
                         fontWeight: fontStyleSelected[0]?FontWeight.bold:FontWeight.normal,
                         fontStyle: fontStyleSelected[1]?FontStyle.italic:FontStyle.normal,
@@ -186,11 +184,16 @@ class _ColorPanelState extends State<ColorPanel> {
                     5,
                     (index) => InkWell(
                       onTap: () {
-                        setStyle(pow(2, index));
+                        setState(() {
+                          for (int i = 0; i < brushSizeSelected.length; i++) {
+                            brushSizeSelected[i] = i == index;
+                          }
+                        });
+                        setStyle(strokeWidth: pow(2, ++index).toDouble());
                       },
                       child: Ink(
                         child: Image(
-                          color: Color(0xff4D53E0),
+                          color: brushSizeSelected[index] ? Color(0xff4D53E0):Colors.white,
                           image: AssetImage('icons/line${index + 1}.png'),
                           height: 30,
                           width: 30,

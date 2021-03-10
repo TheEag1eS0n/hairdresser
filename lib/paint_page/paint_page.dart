@@ -29,7 +29,7 @@ class _PaintPageState extends State<PaintPage> {
   Paint _currentPaint = Paint()
     ..color = Colors.black
     ..strokeCap = StrokeCap.round
-    ..strokeWidth = 4
+    ..strokeWidth = 2
     ..style = PaintingStyle.stroke;
 
   TextStyle _textStyle = TextStyle(
@@ -68,7 +68,7 @@ class _PaintPageState extends State<PaintPage> {
 
   void setCurrentPaint({Color? color, double? strokeWidth}) {
     setState(() {
-      _currentPaint.color = color!;
+      _currentPaint.color = color?? _currentPaint.color;
       _textStyle = _textStyle.merge(TextStyle(
         color: color,
       ));
@@ -94,7 +94,11 @@ class _PaintPageState extends State<PaintPage> {
         GestureDetector(
           onPanStart: (event) {
             setState(() {
-              Paint paint = _currentPaint;
+              Paint paint = Paint()
+              ..color = _currentPaint.color
+              ..strokeWidth = _currentPaint.strokeWidth
+              ..strokeCap = StrokeCap.round
+              ..style = PaintingStyle.stroke;
               _shapeUndoCache = [];
               switch (_currentTool) {
                 case DrawingTool.Brush:
@@ -184,7 +188,6 @@ class _PaintPageState extends State<PaintPage> {
           bottom: 50,
           left: 0,
           width: 200,
-          height: 200,
           child: ColorPanel(
             currentTool: _currentTool,
             setStyle: _currentTool != DrawingTool.Text
