@@ -5,6 +5,7 @@ import 'package:hairdresser/paint_page/tool.dart';
 
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:arrow_path/arrow_path.dart';
+import 'package:path_drawing/path_drawing.dart';
 
 class ArrowLine implements Tool {
   @override
@@ -18,7 +19,7 @@ class ArrowLine implements Tool {
   late Offset center;
 
   @override
-  ArrowLine({required this.start, required this.paint}) {
+  ArrowLine({required this.start, required this.paint, required this.dashedArray}) {
     end = start;
     center = (start + end) / 2;
   }
@@ -26,7 +27,7 @@ class ArrowLine implements Tool {
   @override
   Paint paint;
 
-
+  List<double> dashedArray;
 
   Offset get centerOfBaseLine => (start + end) / 2;
   Offset get advancedPoint => centerOfBaseLine + (center - centerOfBaseLine) * 2;
@@ -36,9 +37,9 @@ class ArrowLine implements Tool {
     Path path = Path()
       ..moveTo(start.dx, start.dy)
       ..quadraticBezierTo(advancedPoint.dx, advancedPoint.dy, end.dx, end.dy);
-    print(path.computeMetrics());
-        Path arrow = ArrowPath.make(path: path, isDoubleSided: false, isAdjusted: false);
-    return path;
+    Path dashedPath = dashPath(path, dashArray: CircularIntervalList<double>(dashedArray));
+        ArrowPath.make(path: dashedPath, isDoubleSided: false, isAdjusted: false);
+    return dashedPath;
   }
   double distanceToLine(Offset p) {
     double dx = (p.dx - start.dx) * (end.dx - start.dx);

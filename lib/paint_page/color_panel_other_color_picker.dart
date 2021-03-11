@@ -276,7 +276,7 @@ class _ColorPanelState extends State<ColorPanel> {
                                   dashedBrushSizeSelected[i] = i == index && !dashedBrushSizeSelected[i];
                                 }
                               });
-                              setStyle(dashArray: dashedBrushSizeSelected[0] ? [1.0, 1.0] : dashedBrushSizeSelected[1] ? [1.0, 2.0] : []);
+                              setStyle(dashArray: dashedBrushSizeSelected[0] ? [1.0, 2.0] : dashedBrushSizeSelected[1] ? [5.0, 5.0] : [1.0, 0.0]);
                             },
                           ),
                         ),
