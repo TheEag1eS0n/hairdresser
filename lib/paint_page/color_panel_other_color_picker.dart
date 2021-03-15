@@ -68,9 +68,9 @@ class _ColorPanelState extends State<ColorPanel> {
       ),
       duration: Duration(milliseconds: 3000),
       curve: Curves.easeOut,
-      height: true ? 150 : 0,
-      width: showColorPicker ? MediaQuery.of(context).size.width : 200,
-      child: Row(
+      height: showColorPicker ? 450 : 160,
+      width: 200,
+      child: Column(
         children: [
           Container(
             alignment: Alignment.centerLeft,
@@ -237,7 +237,7 @@ class _ColorPanelState extends State<ColorPanel> {
                   Wrap(
                     children: [
                       Ink(
-                        height: 25,
+                        height: 40,
                         child: GridView.count(
                           crossAxisCount: 5,
                           children: List.generate(
@@ -311,7 +311,7 @@ class _ColorPanelState extends State<ColorPanel> {
                   )
                 else
                   Ink(
-                      height: 25,
+                      height: 40,
                       child: GridView.count(
                         crossAxisCount: 5,
                         children: List.generate(
@@ -339,69 +339,73 @@ class _ColorPanelState extends State<ColorPanel> {
                             ),
                           ),
                         ),
-                      )),
+                      ),
+                  ),
               ],
             ),
           ),
-          // Expanded(
-          //   child: Row(
-          //     children: [
-          //       Expanded(
-          //         child: ColorPicker(
-          //           onColorChanged: (color) {
-          //             setState(() {
-          //               customColor = color;
-          //             });
-          //           },
-          //           pickersEnabled: {
-          //             ColorPickerType.custom: false,
-          //             ColorPickerType.accent: false,
-          //             ColorPickerType.both: false,
-          //             ColorPickerType.bw: false,
-          //             ColorPickerType.primary: false,
-          //             ColorPickerType.wheel: true,
-          //           },
-          //           wheelDiameter: 100.0,
-          //           wheelWidth: 10,
-          //           enableShadesSelection: false,
-          //         ),
-          //       ),
-          //       // Expanded(
-          //       //   child: ColorPicker(
-          //       //     onColorChanged: (color) {
-          //       //       setState(() {
-          //       //         customColor = color;
-          //       //       });
-          //       //     },
-          //       //     colorPickerWidth: 150,
-          //       //     colorPickerHeight: 60,
-          //       //     pickerColor: customColor,
-          //       //     displayThumbColor: true,
-          //       //     showLabel: false,
-          //       //   ),
-          //       // ),
-          //       Expanded(
-          //         child: OutlinedButton(
-          //           onPressed: () {
-          //             setState(() {
-          //               colors[item] = customColor == Colors.transparent
-          //                   ? Colors.red
-          //                   : customColor;
-          //               showColorPicker = false;
-          //               customColor = Colors.transparent;
-          //               setStyle(color: colors[item]);
-          //             });
-          //           },
-          //           child: Text(
-          //             'SUBMIT',
-          //             overflow: TextOverflow.clip,
-          //             softWrap: false,
-          //           ),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
+          Expanded(
+            child: ListView(
+              children: [
+                ColorPicker(
+                  onColorChanged: (color) {
+                    setState(() {
+                      customColor = color;
+                    });
+                  },
+                  pickersEnabled: {
+                    ColorPickerType.custom: false,
+                    ColorPickerType.accent: false,
+                    ColorPickerType.both: false,
+                    ColorPickerType.bw: false,
+                    ColorPickerType.primary: false,
+                    ColorPickerType.wheel: true,
+                  },
+                  wheelDiameter: 180.0,
+                  wheelWidth: 10,
+                  enableShadesSelection: false,
+                ),
+                // Expanded(
+                //   child: ColorPicker(
+                //     onColorChanged: (color) {
+                //       setState(() {
+                //         customColor = color;
+                //       });
+                //     },
+                //     colorPickerWidth: 150,
+                //     colorPickerHeight: 60,
+                //     pickerColor: customColor,
+                //     displayThumbColor: true,
+                //     showLabel: false,
+                //   ),
+                // ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      colors[item] = customColor == Colors.transparent
+                          ? Colors.red
+                          : customColor;
+                      showColorPicker = false;
+                      customColor = Colors.transparent;
+                      setStyle(color: colors[item]);
+                    });
+                  },
+                  child: Center(
+                    child: Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: [
+                        ColorIndicator(
+                          width: 100,
+                          color: customColor,
+                        ),
+                        Text('SUBMIT'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
