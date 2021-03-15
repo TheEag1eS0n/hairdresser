@@ -5,7 +5,11 @@ class BottomBar extends StatelessWidget {
   final setTool;
   final DrawingTool currentTool;
 
-  const BottomBar({this.setTool, required this.currentTool});
+  final undoMethod;
+  final redoMethod;
+
+  BottomBar({this.setTool, required this.currentTool, required this.undoMethod, required this.redoMethod}) {
+  }
 
   List<bool> get selected {
     var buttons = List.generate(5, (_) => false);
@@ -25,33 +29,34 @@ class BottomBar extends StatelessWidget {
         children: [
           ToggleButtons(
             children: <Widget>[
-              Icon(
-                Icons.brush,
-                size: 20,
-                color: Colors.white,
+              Image(
+                image: AssetImage('icons/brush.png'),
+                height: 20,
+                width: 20,
               ),
-              Icon(
-                Icons.call,
-                size: 20,
-                color: Colors.white,
+              Image(
+                image: AssetImage('icons/line_curve.png'),
+                height: 20,
+                width: 20,
               ),
-              Icon(
-                Icons.cake,
-                size: 20,
-                color: Colors.white,
+              Image(
+                image: AssetImage('icons/eraser.png'),
+                height: 20,
+                width: 20,
               ),
-              Icon(
-                Icons.text_fields,
-                size: 20,
-                color: Colors.white,
+              Image(
+                image: AssetImage('icons/text.png'),
+                height: 20,
+                width: 20,
               ),
-              Icon(
-                Icons.arrow_upward,
-                size: 20,
-                color: Colors.white,
+              Image(
+                image: AssetImage('icons/arrow.png'),
+                height: 20,
+                width: 20,
               ),
             ],
             isSelected: selected,
+            color: Color(0xff4D53E0),
             onPressed: (int index) {
               setTool(DrawingTool.values[index]);
             },
@@ -66,10 +71,10 @@ class BottomBar extends StatelessWidget {
                   color: Colors.white,
                 ),
                 splashRadius: 15,
-                disabledColor: Colors.black.withOpacity(.5),
+                disabledColor: Colors.black.withOpacity(0.1),
                 padding: new EdgeInsets.all(0),
                 constraints: BoxConstraints(minHeight: 30, minWidth: 30),
-                onPressed: null,
+                onPressed: undoMethod,
               ),
               IconButton(
                 icon: Icon(
@@ -77,10 +82,10 @@ class BottomBar extends StatelessWidget {
                   color: Colors.white,
                 ),
                 splashRadius: 20,
-                disabledColor: Colors.black.withOpacity(.5),
+                disabledColor: Colors.black.withOpacity(0.1),
                 padding: new EdgeInsets.all(0),
                 constraints: BoxConstraints(minHeight: 40, minWidth: 40),
-                onPressed: null,
+                onPressed: redoMethod,
               ),
             ],
           )

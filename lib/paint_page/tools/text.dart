@@ -40,6 +40,7 @@ class CanvasText implements Tool {
   @override
   // TODO: implement path
   Path get path {
+    paint.color = Colors.transparent;
     paint.strokeWidth = 1;
     Path path = Path()..moveTo(start.dx, start.dy);
     path.addRect(Rect.fromPoints(start,

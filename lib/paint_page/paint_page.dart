@@ -57,20 +57,24 @@ class _PaintPageState extends State<PaintPage> {
     setState(() {
       _textStyle = _textStyle.merge(TextStyle(
         fontSize: fontSize,
-        color: color?? _currentPaint.color,
+        color: color ?? _currentPaint.color,
         fontStyle: fontStyle,
         fontWeight: fontWeight,
         decoration: decoration,
       ));
-      _currentPaint.color = color?? _currentPaint.color;
+      _currentPaint.color = color ?? _currentPaint.color;
       if (_shapeList.isNotEmpty && _shapeList.last.runtimeType == CanvasText)
         _shapeList.last.update(null, null, null, _textStyle);
     });
   }
 
-  void setCurrentPaint({Color? color, double? strokeWidth, List<double>? dashArray,}) {
+  void setCurrentPaint({
+    Color? color,
+    double? strokeWidth,
+    List<double>? dashArray,
+  }) {
     setState(() {
-      _currentPaint.color = color?? _currentPaint.color;
+      _currentPaint.color = color ?? _currentPaint.color;
       _textStyle = _textStyle.merge(TextStyle(
         color: color,
       ));
@@ -80,7 +84,7 @@ class _PaintPageState extends State<PaintPage> {
         dashArray[0] *= _currentPaint.strokeWidth;
         dashArray[1] *= _currentPaint.strokeWidth;
       }
-      _currentDashArray = dashArray??_currentDashArray;
+      _currentDashArray = dashArray ?? _currentDashArray;
     });
   }
 
@@ -89,9 +93,14 @@ class _PaintPageState extends State<PaintPage> {
   List<Tool> _shapeUndoCache = [];
   List<Tool> _shapeTextList = [];
 
-  void addRedoCache() {
+  void redo() {
     setState(() {
       _shapeList.add(_shapeUndoCache.removeLast());
+    });
+  }
+  void undo() {
+    setState(() {
+      _shapeUndoCache.add(_shapeList.removeLast());
     });
   }
 
@@ -103,10 +112,10 @@ class _PaintPageState extends State<PaintPage> {
           onPanStart: (event) {
             setState(() {
               Paint paint = Paint()
-              ..color = _currentPaint.color
-              ..strokeWidth = _currentPaint.strokeWidth
-              ..strokeCap = StrokeCap.round
-              ..style = PaintingStyle.stroke;
+                ..color = _currentPaint.color
+                ..strokeWidth = _currentPaint.strokeWidth
+                ..strokeCap = StrokeCap.round
+                ..style = PaintingStyle.stroke;
               _shapeUndoCache = [];
               switch (_currentTool) {
                 case DrawingTool.Brush:
@@ -119,12 +128,11 @@ class _PaintPageState extends State<PaintPage> {
                       (_shapeList.last.runtimeType != CurveLine ||
                           !_shapeList.last.hitZone(event.localPosition))) {
                     updateType = UpdateType.SetEndPoint;
-                    _shapeList.add(
-                        CurveLine(
-                            start: event.localPosition,
-                            paint: paint,
-                            dashedArray: _currentDashArray,
-                        ));
+                    _shapeList.add(CurveLine(
+                      start: event.localPosition,
+                      paint: paint,
+                      dashedArray: _currentDashArray,
+                    ));
                   } else {
                     updateType = UpdateType.SetCenterPoint;
                   }
@@ -148,12 +156,11 @@ class _PaintPageState extends State<PaintPage> {
                       (_shapeList.last.runtimeType != ArrowLine ||
                           !_shapeList.last.hitZone(event.localPosition))) {
                     updateType = UpdateType.SetEndPoint;
-                    _shapeList.add(
-                        ArrowLine(
-                            start: event.localPosition,
-                            paint: paint,
-                          dashedArray: _currentDashArray,
-                        ));
+                    _shapeList.add(ArrowLine(
+                      start: event.localPosition,
+                      paint: paint,
+                      dashedArray: _currentDashArray,
+                    ));
                   } else {
                     updateType = UpdateType.SetCenterPoint;
                   }
@@ -198,6 +205,8 @@ class _PaintPageState extends State<PaintPage> {
           child: BottomBar(
             setTool: setCurrentTool,
             currentTool: _currentTool,
+            redoMethod: _shapeUndoCache.isEmpty ? null : redo,
+            undoMethod: _shapeList.isEmpty ? null : undo,
           ),
         ),
         Positioned(
@@ -208,6 +217,18 @@ class _PaintPageState extends State<PaintPage> {
             setStyle: _currentTool != DrawingTool.Text
                 ? setCurrentPaint
                 : setCurrentTextStyle,
+          ),
+        ),
+        Positioned(
+          top: 30,
+          right: 15,
+          child: FloatingActionButton(
+            backgroundColor: Color(0xFFFF5668),
+            child: Image(
+              image: AssetImage('icons/help.png'),
+              height: 60.0,
+            ),
+            onPressed: null,
           ),
         ),
       ],
