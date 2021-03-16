@@ -96,11 +96,18 @@ class _PaintPageState extends State<PaintPage> {
   void redo() {
     setState(() {
       _shapeList.add(_shapeUndoCache.removeLast());
+      if (_shapeList.last.runtimeType == CanvasText)
+        _shapeTextList.add(_shapeList.last);
     });
   }
+
   void undo() {
     setState(() {
-      _shapeUndoCache.add(_shapeList.removeLast());
+      if (_shapeList.isNotEmpty) {
+        if (_shapeList.last == _shapeTextList.last)
+          _shapeTextList.removeLast();
+        _shapeUndoCache.add(_shapeList.removeLast());
+      }
     });
   }
 
@@ -145,9 +152,17 @@ class _PaintPageState extends State<PaintPage> {
                 case DrawingTool.Text:
                   if (_shapeList.isEmpty ||
                       (_shapeList.last.runtimeType != CanvasText ||
-                          !_shapeList.last.hitZone(event.localPosition)))
-                    _showDialog(event.localPosition);
-                  else
+                          !_shapeList.last.hitZone(event.localPosition))) {
+                    _shapeList.add(
+                      CanvasText(
+                        text: 'Введите текст',
+                        start: event.localPosition,
+                        paint: _currentPaint,
+                        textStyle: _textStyle,
+                      ),
+                    );
+                    _shapeTextList.add(_shapeList.last);
+                  } else
                     _shapeList.last.start = event.localPosition;
                   break;
 
@@ -188,9 +203,33 @@ class _PaintPageState extends State<PaintPage> {
                   (index) => Positioned(
                     left: _shapeTextList[index].start.dx,
                     top: _shapeTextList[index].start.dy,
-                    child: Text(
-                      _shapeTextList[index].text,
-                      style: _shapeTextList[index].textStyle,
+                    child: Container(
+                      width: 150,
+                      child: GestureDetector(
+                        onDoubleTap: () {
+                          print('qwe');
+                        },
+                        child: TextField(
+                          controller: _shapeTextList[index].text,
+                          onTap: () {
+                            _shapeTextList[index].text.selection = TextSelection(
+                              baseOffset: 0,
+                              extentOffset: _shapeTextList[index].text.text.length,
+                            );
+                          },
+                          onSubmitted: (value) {
+                            if (value.length == 0) {
+                              _shapeList.remove(_shapeTextList[index]);
+                              _shapeTextList.remove(_shapeTextList[index]);
+                            }
+                          },
+                          style: _shapeTextList[index].textStyle,
+                          decoration: InputDecoration.collapsed(
+                            hintText: '',
+                          ),
+                          // _shapeTextList[index].text,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -235,41 +274,41 @@ class _PaintPageState extends State<PaintPage> {
     );
   }
 
-  _showDialog(Offset position) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text('Что хотите написать?'),
-        content: Form(
-          child: TextFormField(
-            controller: textController,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Напишите что-нибудь :)';
-              }
-              return null;
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              setState(() {
-                _shapeList.add(CanvasText(
-                    text: textController.text,
-                    start: position,
-                    paint: _currentPaint,
-                    textStyle: _textStyle));
-                _shapeTextList.add(_shapeList.last);
-              });
-            },
-            child: Text('SUBMIT'),
-          ),
-        ],
-      ),
-    );
-  }
+  // _showDialog(Offset position) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (_) => AlertDialog(
+  //       title: Text('Что хотите написать?'),
+  //       content: Form(
+  //         child: TextFormField(
+  //           controller: textController,
+  //           validator: (value) {
+  //             if (value!.isEmpty) {
+  //               return 'Напишите что-нибудь :)';
+  //             }
+  //             return null;
+  //           },
+  //         ),
+  //       ),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.of(context).pop();
+  //             setState(() {
+  //               _shapeList.add(CanvasText(
+  //                   text: textController.text,
+  //                   start: position,
+  //                   paint: _currentPaint,
+  //                   textStyle: _textStyle));
+  //               _shapeTextList.add(_shapeList.last);
+  //             });
+  //           },
+  //           child: Text('SUBMIT'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 class BottomSheet extends StatelessWidget {

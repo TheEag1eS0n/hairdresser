@@ -13,23 +13,20 @@ class CanvasText implements Tool {
   @override
   Offset start;
 
-  late String _text;
+  late TextEditingController _text;
 
-  String get text => _text;
-
-  set text(String text) {
-    _text = text;
-  }
+  TextEditingController get text => _text;
 
   TextStyle textStyle;
 
   CanvasText({
-    required text,
+    required String text,
     required this.start,
     required this.paint,
     required this.textStyle,
   }) {
-    _text = text;
+    _text = new TextEditingController()
+      ..text = text;
   }
 
   @override
@@ -40,11 +37,16 @@ class CanvasText implements Tool {
   @override
   // TODO: implement path
   Path get path {
-    paint.color = Colors.transparent;
+    // paint.color = Colors.transparent;
+    paint.blendMode = BlendMode.src;
     paint.strokeWidth = 1;
-    Path path = Path()..moveTo(start.dx, start.dy);
-    path.addRect(Rect.fromPoints(start,
-        Offset(start.dx + textPainter.width, start.dy + textPainter.height)));
+    // print(start.dy);
+    // Path path = Path()..moveTo(start.dx, start.dy);
+    Path path = Path();
+    path.addRRect(
+        RRect.fromLTRBR(
+            start.dx - textPainter.height - 5.0,
+            start.dy, start.dx - 5, start.dy + textPainter.height, Radius.circular(5.0)));
     return path;
   }
 
@@ -53,7 +55,7 @@ class CanvasText implements Tool {
       textDirection: TextDirection.ltr,
     );
     textPainter.text = TextSpan(
-      text: text,
+      text: _text.text,
       style: textStyle,
     );
     textPainter.layout();

@@ -42,5 +42,5 @@ class Brush implements Tool {
 
   @override
   // TODO: implement text
-  String get text => throw UnimplementedError();
+  TextEditingController get text => throw UnimplementedError();
 }

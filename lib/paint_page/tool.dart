@@ -20,7 +20,7 @@ abstract class Tool {
   void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle]);
 
   Path get path;
-  String get text;
+  TextEditingController get text;
 
   bool hitZone(tap);
 }

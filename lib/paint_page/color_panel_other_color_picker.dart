@@ -66,9 +66,9 @@ class _ColorPanelState extends State<ColorPanel> {
           )
         ],
       ),
-      duration: Duration(milliseconds: 3000),
+      duration: Duration(milliseconds: 500),
       curve: Curves.easeOut,
-      height: showColorPicker ? 450 : 160,
+      height: showColorPicker ? 450 : currentTool == DrawingTool.Eraser ? 60 : 160,
       width: 200,
       child: Column(
         children: [

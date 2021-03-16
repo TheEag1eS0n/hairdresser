@@ -8,8 +8,7 @@ class BottomBar extends StatelessWidget {
   final undoMethod;
   final redoMethod;
 
-  BottomBar({this.setTool, required this.currentTool, required this.undoMethod, required this.redoMethod}) {
-  }
+  BottomBar({this.setTool, required this.currentTool, required this.undoMethod, required this.redoMethod});
 
   List<bool> get selected {
     var buttons = List.generate(5, (_) => false);
