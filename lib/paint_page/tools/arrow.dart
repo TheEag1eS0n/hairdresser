@@ -63,7 +63,7 @@ class ArrowLine implements Tool {
   TextPainter get textPainter => throw UnimplementedError();
 
   @override
-  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle]) {
+  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false]) {
     switch (updateType) {
       case UpdateType.SetEndPoint:
         end = point ?? end;
@@ -77,4 +77,10 @@ class ArrowLine implements Tool {
   @override
   // TODO: implement text
   TextEditingController get text => throw UnimplementedError();
+
+  @override
+  bool enabled = false;
+
+  @override
+  late FocusNode focusNode;
 }

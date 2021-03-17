@@ -14,13 +14,17 @@ abstract class Tool {
 
   late Offset end;
   late TextStyle textStyle;
+  late bool enabled;
+
+  late FocusNode focusNode;
 
   Tool({required this.start, required this.paint});
 
-  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle]);
+  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false]);
 
   Path get path;
   TextEditingController get text;
+  TextPainter get textPainter;
 
   bool hitZone(tap);
 }

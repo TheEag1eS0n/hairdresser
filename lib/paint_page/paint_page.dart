@@ -124,7 +124,7 @@ class _PaintPageState extends State<PaintPage> {
               Paint paint = Paint()
                 ..color = _currentPaint.color
                 ..strokeWidth = (pow(_currentWidth.index.toInt() + 1, 2)).toDouble()
-                ..blendMode = BlendMode.color
+                ..blendMode = BlendMode.modulate
                 ..strokeCap = StrokeCap.round
                 ..style = PaintingStyle.stroke;
               _shapeUndoCache = [];
@@ -157,11 +157,17 @@ class _PaintPageState extends State<PaintPage> {
                   if (_shapeList.isEmpty ||
                       (_shapeList.last.runtimeType != CanvasText ||
                           !_shapeList.last.hitZone(event.localPosition))) {
+                    Paint paint = Paint()
+                      ..color = Colors.transparent
+                      ..strokeWidth = (pow(_currentWidth.index.toInt() + 1, 2)).toDouble()
+                      ..blendMode = BlendMode.modulate
+                      ..strokeCap = StrokeCap.round
+                      ..style = PaintingStyle.stroke;
                     _shapeList.add(
                       CanvasText(
                         text: 'Введите текст',
                         start: event.localPosition,
-                        paint: _currentPaint,
+                        paint: paint,
                         textStyle: _textStyle,
                       ),
                     );
@@ -189,7 +195,9 @@ class _PaintPageState extends State<PaintPage> {
           },
           onPanUpdate: (event) {
             setState(() {
-              _shapeList.last.update(event.localPosition, updateType);
+              if (_shapeList.last.runtimeType != CanvasText) {
+                _shapeList.last.update(event.localPosition, updateType);
+              }
             });
           },
           onPanEnd: (event) {},
@@ -208,28 +216,56 @@ class _PaintPageState extends State<PaintPage> {
                     (index) => Positioned(
                       left: _shapeTextList[index].start.dx,
                       top: _shapeTextList[index].start.dy,
-                      child: Container(
-                        width: 150,
-                        child: TextField(
-                          controller: _shapeTextList[index].text,
-                          onTap: () {
-                            _shapeTextList[index].text.selection = TextSelection(
-                              baseOffset: 0,
-                              extentOffset:
-                                  _shapeTextList[index].text.text.length,
-                            );
-                          },
-                          onSubmitted: (value) {
-                            if (value.length == 0) {
-                              _shapeList.remove(_shapeTextList[index]);
-                              _shapeTextList.remove(_shapeTextList[index]);
-                            }
-                          },
-                          style: _shapeTextList[index].textStyle,
-                          decoration: InputDecoration.collapsed(
-                            hintText: '',
+                      child: GestureDetector(
+                        onLongPressStart: (event) {
+                          setState(() {
+                            _shapeTextList[index].paint.color = Colors.black;
+                          });
+                        },
+                        onLongPressMoveUpdate: (event) {
+                          setState(() {
+                            _shapeTextList[index].update(event.globalPosition);
+                          });
+                        },
+                        onLongPressEnd: (event) {
+                          setState(() {
+                            _shapeTextList[index].paint.color = Colors.transparent;
+                          });
+                        },
+                        onDoubleTap: () {
+                          setState(() {
+                            _shapeTextList[index].enabled = true;
+                          });
+                          return _shapeTextList[index].focusNode.requestFocus();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: _shapeTextList[index].enabled ? Border.all(
+                              width: 1,
+                              style: BorderStyle.solid,
+                            ) : null,
                           ),
-                          // _shapeTextList[index].text,
+                          width: 175,
+                          child: TextField(
+                            controller: _shapeTextList[index].text,
+                            enabled: _shapeTextList[index].enabled,
+                            focusNode: _shapeTextList[index].focusNode,
+                            maxLength: 16,
+                            onSubmitted: (value) {
+                              setState(() {
+                                _shapeTextList[index].enabled = false;
+                                if (value.length == 0) {
+                                  _shapeList.remove(_shapeTextList[index]);
+                                  _shapeTextList.remove(_shapeTextList[index]);
+                                }
+                              });
+                            },
+                            style: _shapeTextList[index].textStyle,
+                            decoration: InputDecoration.collapsed(
+                              hintText: '',
+                            ),
+                            // _shapeTextList[index].text,
+                          ),
                         ),
                       ),
                     ),
@@ -276,40 +312,4 @@ class _PaintPageState extends State<PaintPage> {
       ],
     );
   }
-
-  // _showDialog(Offset position) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (_) => AlertDialog(
-  //       title: Text('Что хотите написать?'),
-  //       content: Form(
-  //         child: TextFormField(
-  //           controller: textController,
-  //           validator: (value) {
-  //             if (value!.isEmpty) {
-  //               return 'Напишите что-нибудь :)';
-  //             }
-  //             return null;
-  //           },
-  //         ),
-  //       ),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () {
-  //             Navigator.of(context).pop();
-  //             setState(() {
-  //               _shapeList.add(CanvasText(
-  //                   text: textController.text,
-  //                   start: position,
-  //                   paint: _currentPaint,
-  //                   textStyle: _textStyle));
-  //               _shapeTextList.add(_shapeList.last);
-  //             });
-  //           },
-  //           child: Text('SUBMIT'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }

@@ -233,15 +233,13 @@ class _ColorPanelState extends State<ColorPanel> {
                     children: List.generate(
                       3,
                       (index) => InkWell(
-                        child: Ink(
-                          child: Image(
-                            color: brushSizeSelected[index]
-                                ? Color(0xff4D53E0)
-                                : Colors.white,
-                            image: AssetImage('icons/line${index + 1}.png'),
-                            height: 20,
-                            width: 20,
-                          ),
+                        child: Image(
+                          color: brushSizeSelected[index]
+                              ? Color(0xff4D53E0)
+                              : Colors.white,
+                          image: AssetImage('icons/line${index + 1}.png'),
+                          height: 20,
+                          width: 20,
                         ),
                         onTap: () {
                           setState(() {
@@ -263,16 +261,14 @@ class _ColorPanelState extends State<ColorPanel> {
                     children: List.generate(
                       2,
                       (index) => InkWell(
-                        child: Ink(
-                          child: Image(
-                            color: dashedBrushSizeSelected[index]
-                                ? Color(0xff4D53E0)
-                                : Colors.white,
-                            image: AssetImage(
-                                'icons/${index == 0 ? 'dotted' : 'dashed'}.png'),
-                            height: 20,
-                            width: 20,
-                          ),
+                        child: Image(
+                          color: dashedBrushSizeSelected[index]
+                              ? Color(0xff4D53E0)
+                              : Colors.white,
+                          image: AssetImage(
+                              'icons/${index == 0 ? 'dotted' : 'dashed'}.png'),
+                          height: 20,
+                          width: 20,
                         ),
                         onTap: () {
                           setState(() {
@@ -312,15 +308,13 @@ class _ColorPanelState extends State<ColorPanel> {
                       });
                       setStyle(strokeWidth: StrokeWidth.values[index]);
                     },
-                    child: Ink(
-                      child: Image(
-                        color: brushSizeSelected[index]
-                            ? Color(0xff4D53E0)
-                            : Colors.white,
-                        image: AssetImage('icons/line${index + 1}.png'),
-                        height: 30,
-                        width: 30,
-                      ),
+                    child: Image(
+                      color: brushSizeSelected[index]
+                          ? Color(0xff4D53E0)
+                          : Colors.white,
+                      image: AssetImage('icons/line${index + 1}.png'),
+                      height: 30,
+                      width: 30,
                     ),
                   ),
                 ),

@@ -10,7 +10,7 @@ class Erase implements Tool {
   @override
   Paint paint = Paint()
     ..color = Colors.transparent
-    ..blendMode = BlendMode.clear
+    ..blendMode = BlendMode.screen
     ..style = PaintingStyle.stroke
     ..strokeCap = StrokeCap.round
     ..strokeWidth = 20;
@@ -45,11 +45,21 @@ class Erase implements Tool {
   }
 
   @override
-  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle]) {
+  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false]) {
     points.add(point!);
   }
 
   @override
   // TODO: implement text
   TextEditingController get text => throw UnimplementedError();
+
+  @override
+  bool enabled = false;
+
+  @override
+  late FocusNode focusNode;
+
+  @override
+  // TODO: implement textPainter
+  TextPainter get textPainter => throw UnimplementedError();
 }

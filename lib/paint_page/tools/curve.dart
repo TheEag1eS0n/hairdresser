@@ -59,7 +59,7 @@ class CurveLine implements Tool {
   }
 
   @override
-  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle]) {
+  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false]) {
     switch (updateType) {
       case UpdateType.SetEndPoint:
         end = point!;
@@ -73,4 +73,14 @@ class CurveLine implements Tool {
   @override
   // TODO: implement text
   TextEditingController get text => throw UnimplementedError();
+
+  @override
+  bool enabled = false;
+
+  @override
+  late FocusNode focusNode;
+
+  @override
+  // TODO: implement textPainter
+  TextPainter get textPainter => throw UnimplementedError();
 }

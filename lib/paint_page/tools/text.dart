@@ -25,6 +25,7 @@ class CanvasText implements Tool {
     required this.paint,
     required this.textStyle,
   }) {
+    focusNode = new FocusNode();
     _text = new TextEditingController()
       ..text = text;
   }
@@ -60,8 +61,15 @@ class CanvasText implements Tool {
   }
 
   @override
-  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle]) {
+  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false]) {
     this.start = point ?? this.start;
     this.textStyle = textStyle ?? this.textStyle;
+    this.enabled = enabled;
   }
+
+  @override
+  bool enabled = false;
+
+  @override
+  late FocusNode focusNode;
 }

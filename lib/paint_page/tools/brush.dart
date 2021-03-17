@@ -36,11 +36,21 @@ class Brush implements Tool {
   }
 
   @override
-  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle]) {
+  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false]) {
     points.add(point!);
   }
 
   @override
   // TODO: implement text
   TextEditingController get text => throw UnimplementedError();
+
+  @override
+  bool enabled = false;
+
+  @override
+  late FocusNode focusNode;
+
+  @override
+  // TODO: implement textPainter
+  TextPainter get textPainter => throw UnimplementedError();
 }
