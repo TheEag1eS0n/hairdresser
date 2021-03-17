@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hairdresser/paint_page/canvas_painter.dart';
 import 'package:hairdresser/paint_page/color_panel_other_color_picker.dart';
+import 'package:hairdresser/paint_page/stroke_width.dart';
 import 'package:hairdresser/paint_page/tool.dart';
 import 'package:hairdresser/paint_page/tools/arrow.dart';
 import 'package:hairdresser/paint_page/tools/brush.dart';
@@ -25,6 +28,7 @@ class _PaintPageState extends State<PaintPage> {
     super.dispose();
   }
 
+  StrokeWidth _currentWidth = StrokeWidth.Light;
   DrawingTool _currentTool = DrawingTool.Brush;
   List<double> _currentDashArray = [1.0, 0.0];
 
@@ -70,15 +74,16 @@ class _PaintPageState extends State<PaintPage> {
 
   void setCurrentPaint({
     Color? color,
-    double? strokeWidth,
+    StrokeWidth? strokeWidth,
     List<double>? dashArray,
   }) {
     setState(() {
+      _currentWidth = strokeWidth??_currentWidth;
       _currentPaint.color = color ?? _currentPaint.color;
       _textStyle = _textStyle.merge(TextStyle(
         color: color,
       ));
-      _currentPaint.strokeWidth = strokeWidth ?? _currentPaint.strokeWidth;
+      _currentPaint.strokeWidth = strokeWidth?.index.toDouble() ?? _currentPaint.strokeWidth;
 
       if (dashArray != null) {
         dashArray[0] *= _currentPaint.strokeWidth;
@@ -118,7 +123,7 @@ class _PaintPageState extends State<PaintPage> {
             setState(() {
               Paint paint = Paint()
                 ..color = _currentPaint.color
-                ..strokeWidth = _currentPaint.strokeWidth
+                ..strokeWidth = (pow(_currentWidth.index.toInt() + 1, 2)).toDouble()
                 ..blendMode = BlendMode.color
                 ..strokeCap = StrokeCap.round
                 ..style = PaintingStyle.stroke;
@@ -253,6 +258,7 @@ class _PaintPageState extends State<PaintPage> {
             setStyle: _currentTool != DrawingTool.Text
                 ? setCurrentPaint
                 : setCurrentTextStyle,
+            currentWidth: _currentWidth,
           ),
         ),
         Positioned(
