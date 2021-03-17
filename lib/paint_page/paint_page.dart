@@ -251,6 +251,14 @@ class _PaintPageState extends State<PaintPage> {
                             enabled: _shapeTextList[index].enabled,
                             focusNode: _shapeTextList[index].focusNode,
                             maxLength: 16,
+                            onTap: () {
+                              setState(() {
+                                _shapeTextList[index].text.selection = TextSelection(
+                                  baseOffset: 0,
+                                  extentOffset: _shapeTextList[index].text.text.length,
+                                );
+                              });
+                            },
                             onSubmitted: (value) {
                               setState(() {
                                 _shapeTextList[index].enabled = false;
