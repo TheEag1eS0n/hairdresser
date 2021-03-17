@@ -37,16 +37,13 @@ class CanvasText implements Tool {
   @override
   // TODO: implement path
   Path get path {
-    // paint.color = Colors.transparent;
-    paint.blendMode = BlendMode.src;
     paint.strokeWidth = 1;
-    // print(start.dy);
-    // Path path = Path()..moveTo(start.dx, start.dy);
     Path path = Path();
     path.addRRect(
         RRect.fromLTRBR(
             start.dx - textPainter.height - 5.0,
             start.dy, start.dx - 5, start.dy + textPainter.height, Radius.circular(5.0)));
+    path.close();
     return path;
   }
 

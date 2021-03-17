@@ -52,7 +52,11 @@ class CurveLine implements Tool {
   }
 
   @override
-  bool hitZone(tap) => distanceToLine(tap) <= paint.strokeWidth;
+  bool hitZone(tap) {
+    if (paint.strokeWidth < 4)
+      return distanceToLine(tap) <= 5;
+    return distanceToLine(tap) <= paint.strokeWidth;
+  }
 
   @override
   void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle]) {

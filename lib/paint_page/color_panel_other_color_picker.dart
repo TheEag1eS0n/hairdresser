@@ -234,14 +234,15 @@ class _ColorPanelState extends State<ColorPanel> {
                   )
                 else if (currentTool == DrawingTool.Curve ||
                     currentTool == DrawingTool.Arrow)
-                  Wrap(
+                  Row(
                     children: [
-                      Ink(
+                      SizedBox(
                         height: 40,
+                        width: 105,
                         child: GridView.count(
-                          crossAxisCount: 5,
+                          crossAxisCount: 3,
                           children: List.generate(
-                            5,
+                            3,
                             (index) => InkWell(
                               child: Ink(
                                 child: Image(
@@ -250,8 +251,8 @@ class _ColorPanelState extends State<ColorPanel> {
                                       : Colors.white,
                                   image:
                                       AssetImage('icons/line${index + 1}.png'),
-                                  height: 30,
-                                  width: 30,
+                                  height: 20,
+                                  width: 20,
                                 ),
                               ),
                               onTap: () {
@@ -263,16 +264,17 @@ class _ColorPanelState extends State<ColorPanel> {
                                   }
                                 });
                                 setStyle(
-                                    strokeWidth: pow(2, ++index).toDouble());
+                                    strokeWidth: (2 * ++index).toDouble());
                               },
                             ),
                           ),
                         ),
                       ),
-                      Ink(
-                        height: 25,
+                      SizedBox(
+                        height: 40,
+                        width: 75,
                         child: GridView.count(
-                          crossAxisCount: 5,
+                          crossAxisCount: 2,
                           children: List.generate(
                             2,
                             (index) => InkWell(
@@ -282,9 +284,9 @@ class _ColorPanelState extends State<ColorPanel> {
                                       ? Color(0xff4D53E0)
                                       : Colors.white,
                                   image:
-                                      AssetImage('icons/line${index + 1}.png'),
-                                  height: 30,
-                                  width: 30,
+                                      AssetImage('icons/${index == 0 ? 'dotted' : 'dashed'}.png'),
+                                  height: 20,
+                                  width: 20,
                                 ),
                               ),
                               onTap: () {
@@ -325,7 +327,7 @@ class _ColorPanelState extends State<ColorPanel> {
                                   brushSizeSelected[i] = i == index;
                                 }
                               });
-                              setStyle(strokeWidth: pow(2, ++index).toDouble());
+                              setStyle(strokeWidth: (2 * ++index).toDouble());
                             },
                             child: Ink(
                               child: Image(

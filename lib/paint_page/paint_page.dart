@@ -103,11 +103,9 @@ class _PaintPageState extends State<PaintPage> {
 
   void undo() {
     setState(() {
-      if (_shapeList.isNotEmpty) {
-        if (_shapeList.last == _shapeTextList.last)
+        if (_shapeTextList.isNotEmpty && _shapeList.last == _shapeTextList.last)
           _shapeTextList.removeLast();
         _shapeUndoCache.add(_shapeList.removeLast());
-      }
     });
   }
 
@@ -121,6 +119,7 @@ class _PaintPageState extends State<PaintPage> {
               Paint paint = Paint()
                 ..color = _currentPaint.color
                 ..strokeWidth = _currentPaint.strokeWidth
+                ..blendMode = BlendMode.color
                 ..strokeCap = StrokeCap.round
                 ..style = PaintingStyle.stroke;
               _shapeUndoCache = [];
@@ -189,32 +188,30 @@ class _PaintPageState extends State<PaintPage> {
             });
           },
           onPanEnd: (event) {},
-          child: Stack(
-            children: [
-              CustomPaint(
-                foregroundPainter: ShapesCanvas(shapes: _shapeList),
-                child: Center(
-                  child: Image.asset('images/bg-head.png'),
+          child: Container(
+            child: Stack(
+              children: [
+                CustomPaint(
+                  foregroundPainter: ShapesCanvas(shapes: _shapeList),
+                  child: Center(
+                    child: Image.asset('images/bg-head.png'),
+                  ),
                 ),
-              ),
-              Stack(
-                children: List.generate(
-                  _shapeTextList.length,
-                  (index) => Positioned(
-                    left: _shapeTextList[index].start.dx,
-                    top: _shapeTextList[index].start.dy,
-                    child: Container(
-                      width: 150,
-                      child: GestureDetector(
-                        onDoubleTap: () {
-                          print('qwe');
-                        },
+                Stack(
+                  children: List.generate(
+                    _shapeTextList.length,
+                    (index) => Positioned(
+                      left: _shapeTextList[index].start.dx,
+                      top: _shapeTextList[index].start.dy,
+                      child: Container(
+                        width: 150,
                         child: TextField(
                           controller: _shapeTextList[index].text,
                           onTap: () {
                             _shapeTextList[index].text.selection = TextSelection(
                               baseOffset: 0,
-                              extentOffset: _shapeTextList[index].text.text.length,
+                              extentOffset:
+                                  _shapeTextList[index].text.text.length,
                             );
                           },
                           onSubmitted: (value) {
@@ -233,8 +230,8 @@ class _PaintPageState extends State<PaintPage> {
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         Positioned(
@@ -309,17 +306,4 @@ class _PaintPageState extends State<PaintPage> {
   //     ),
   //   );
   // }
-}
-
-class BottomSheet extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Container(
-        height: 200,
-        color: Colors.amber,
-      ),
-      onTap: () => Navigator.pop(context),
-    );
-  }
 }
