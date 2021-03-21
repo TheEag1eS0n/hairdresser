@@ -40,7 +40,7 @@ class _GestureWidgetState extends State<GestureWidget> {
     return checkZoneElement;
   }
 
-  late int editingElement;
+  int editingElement = -1;
 
   DrawingTool get currentTool => widget.currentTool;
 
@@ -48,6 +48,10 @@ class _GestureWidgetState extends State<GestureWidget> {
     if (currentTool == DrawingTool.Text) {
       return GestureDetector(
         onTapUp: (event) {
+          if (editingElement != -1 && widget.currentElements.isNotEmpty)
+            widget.updateTool(
+                editedShape: widget.currentElements[editingElement],
+                enable: false);
           setState(() {
             editingElement = checkTextZones(event.localPosition);
           });

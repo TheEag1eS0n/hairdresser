@@ -173,7 +173,16 @@ class _PaintPageState extends State<PaintPage> {
               left: _shapeTextList[index].start.dx,
               top: _shapeTextList[index].start.dy,
               child: Container(
-                width: _shapeTextList[index].textPainter.size.width + 10.0,
+                decoration: BoxDecoration(
+                  border: _shapeTextList[index].enabled
+                      ? Border.all(
+                          width: 1,
+                          style: BorderStyle.solid,
+                        )
+                      : null,
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))
+                ),
+                width: _shapeTextList[index].textPainter.size.width + 10,
                 child: TextField(
                   minLines: 1,
                   maxLines: 1,
