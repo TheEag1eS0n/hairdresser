@@ -62,20 +62,17 @@ class _GestureWidgetState extends State<GestureWidget> {
               paint: widget.paint,
               textStyle: widget.textStyle,
             ));
-            print(widget.textStyle);
           }
           else {
             widget.updateTool(
                 editedShape: widget.currentElements[editingElement],
                 enable: true);
-            // print(widget.currentElements[editingElement].enabled);
             widget.currentElements[editingElement].focusNode.requestFocus();
           }
         },
         onLongPressStart: (event) {
           setState(() {
             editingElement = checkTextZones(event.localPosition);
-            print(editingElement);
           });
           widget.updateTool(
               editedShape: widget.currentElements[editingElement],
@@ -101,7 +98,6 @@ class _GestureWidgetState extends State<GestureWidget> {
         onPanStart: (event) {
           setState(() {
             editingElement = checkTextZones(event.localPosition);
-            print(editingElement);
           });
           if (editingElement == -1) {
             switch (currentTool) {

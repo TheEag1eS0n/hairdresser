@@ -73,16 +73,14 @@ class ArrowLine implements Tool {
       Paint? paint,
       TextStyle? textStyle,
       bool enabled = false}) {
-    // switch (updateType) {
-    //   case UpdateType.SetEndPoint:
-    //     end = point ?? end;
-    //     center = (start + end) / 2;
-    //     break;
-    //   case UpdateType.SetCenterPoint:
-    //     center = point ?? center;
-    // }
-    end = point ?? end;
-    center = (start + end) / 2;
+    switch (updateType) {
+      case UpdateType.SetEndPoint:
+        end = point ?? end;
+        center = (start + end) / 2;
+        break;
+      case UpdateType.SetCenterPoint:
+        center = point ?? center;
+    }
   }
 
   @override
