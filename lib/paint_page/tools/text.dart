@@ -42,8 +42,8 @@ class CanvasText implements Tool {
     Path path = Path();
     path.addRRect(
         RRect.fromLTRBR(
-            start.dx - textPainter.height - 5.0,
-            start.dy, start.dx - 5, start.dy + textPainter.height, Radius.circular(5.0)));
+            start.dx - 5.0,
+            start.dy - 5.0, start.dx + textPainter.width + 5.0, start.dy + textPainter.height + 5.0, Radius.circular(5.0)));
     path.close();
     return path;
   }
@@ -61,7 +61,7 @@ class CanvasText implements Tool {
   }
 
   @override
-  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false]) {
+  void update({Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false}) {
     this.start = point ?? this.start;
     this.textStyle = textStyle ?? this.textStyle;
     this.enabled = enabled;

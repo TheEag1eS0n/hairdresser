@@ -10,7 +10,7 @@ import 'package:hairdresser/paint_page/tools_list.dart';
 class ColorPanel extends StatefulWidget {
   final setStyle;
   final currentTool;
-  StrokeWidth currentWidth;
+  final StrokeWidth currentWidth;
 
   ColorPanel({this.setStyle, this.currentTool, required this.currentWidth});
 

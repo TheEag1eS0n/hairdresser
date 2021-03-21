@@ -19,7 +19,8 @@ class ArrowLine implements Tool {
   late Offset center;
 
   @override
-  ArrowLine({required this.start, required this.paint, required this.dashedArray}) {
+  ArrowLine(
+      {required this.start, required this.paint, required this.dashedArray}) {
     end = start;
     center = (start + end) / 2;
   }
@@ -30,17 +31,20 @@ class ArrowLine implements Tool {
   List<double> dashedArray;
 
   Offset get centerOfBaseLine => (start + end) / 2;
-  Offset get advancedPoint => centerOfBaseLine + (center - centerOfBaseLine) * 2;
+  Offset get advancedPoint =>
+      centerOfBaseLine + (center - centerOfBaseLine) * 2;
 
   @override
   Path get path {
     Path path = Path()
       ..moveTo(start.dx, start.dy)
       ..quadraticBezierTo(advancedPoint.dx, advancedPoint.dy, end.dx, end.dy);
-    Path dashedPath = dashPath(path, dashArray: CircularIntervalList<double>(dashedArray));
-        ArrowPath.make(path: dashedPath, isDoubleSided: false, isAdjusted: false);
+    Path dashedPath =
+        dashPath(path, dashArray: CircularIntervalList<double>(dashedArray));
+    ArrowPath.make(path: dashedPath, isDoubleSided: false, isAdjusted: false);
     return dashedPath;
   }
+
   double distanceToLine(Offset p) {
     double dx = (p.dx - start.dx) * (end.dx - start.dx);
     double dy = (p.dy - start.dy) * (end.dy - start.dy);
@@ -63,15 +67,22 @@ class ArrowLine implements Tool {
   TextPainter get textPainter => throw UnimplementedError();
 
   @override
-  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false]) {
-    switch (updateType) {
-      case UpdateType.SetEndPoint:
-        end = point ?? end;
-        center = (start + end) / 2;
-        break;
-      case UpdateType.SetCenterPoint:
-        center = point ?? center;
-    }
+  void update(
+      {Offset? point,
+      UpdateType? updateType,
+      Paint? paint,
+      TextStyle? textStyle,
+      bool enabled = false}) {
+    // switch (updateType) {
+    //   case UpdateType.SetEndPoint:
+    //     end = point ?? end;
+    //     center = (start + end) / 2;
+    //     break;
+    //   case UpdateType.SetCenterPoint:
+    //     center = point ?? center;
+    // }
+    end = point ?? end;
+    center = (start + end) / 2;
   }
 
   @override

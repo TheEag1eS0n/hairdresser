@@ -20,7 +20,7 @@ abstract class Tool {
 
   Tool({required this.start, required this.paint});
 
-  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false]);
+  void update({Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false});
 
   Path get path;
   TextEditingController get text;

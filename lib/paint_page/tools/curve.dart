@@ -59,14 +59,15 @@ class CurveLine implements Tool {
   }
 
   @override
-  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false]) {
+  void update({Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false}) {
     switch (updateType) {
-      case UpdateType.SetEndPoint:
+      case UpdateType.SetCenterPoint:
+        center = point!;
+        break;
+      default:
         end = point!;
         center = (start + end) / 2;
         break;
-      case UpdateType.SetCenterPoint:
-        center = point!;
     }
   }
 

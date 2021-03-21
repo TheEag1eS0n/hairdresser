@@ -36,7 +36,7 @@ class Brush implements Tool {
   }
 
   @override
-  void update([Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false]) {
+  void update({Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false}) {
     points.add(point!);
   }
 
