@@ -56,13 +56,13 @@ class _PaintPageState extends State<PaintPage> {
       FontStyle? fontStyle,
       TextDecoration? decoration}) {
     setState(() {
-      _textStyle = new TextStyle(
+      _textStyle = _textStyle.merge(TextStyle(
         fontSize: fontSize,
         color: color,
         fontStyle: fontStyle,
         fontWeight: fontWeight,
         decoration: decoration,
-      );
+      ));
       _currentPaint.color = color ?? _currentPaint.color;
     });
   }

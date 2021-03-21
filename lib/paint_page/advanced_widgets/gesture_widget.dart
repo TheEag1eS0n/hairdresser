@@ -56,6 +56,7 @@ class _GestureWidgetState extends State<GestureWidget> {
             editingElement = checkTextZones(event.localPosition);
           });
           if (editingElement == -1) {
+            print(widget.textStyle);
             widget.createTool(CanvasText(
               text: 'Введите текст',
               start: event.localPosition,
