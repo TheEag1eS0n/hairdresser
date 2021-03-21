@@ -25,9 +25,14 @@ class CanvasText implements Tool {
     required this.paint,
     required this.textStyle,
   }) {
-    focusNode = new FocusNode();
     _text = new TextEditingController()
       ..text = text;
+    focusNode = new FocusNode()
+      ..addListener(() {
+        if (enabled)
+          _text.selection =
+              new TextSelection(baseOffset: 0, extentOffset: _text.text.length);
+      });
   }
 
   @override
@@ -39,11 +44,14 @@ class CanvasText implements Tool {
   // TODO: implement path
   Path get path {
     paint.strokeWidth = 1;
+    paint.color = Colors.transparent;
     Path path = Path();
-    path.addRRect(
-        RRect.fromLTRBR(
-            start.dx - 5.0,
-            start.dy - 5.0, start.dx + textPainter.width + 5.0, start.dy + textPainter.height + 5.0, Radius.circular(5.0)));
+    path.addRRect(RRect.fromLTRBR(
+        start.dx - 5.0,
+        start.dy - 5.0,
+        start.dx + textPainter.width + 10.0,
+        start.dy + textPainter.height * 2 + 5.0,
+        Radius.circular(5.0)));
     path.close();
     return path;
   }
@@ -61,7 +69,12 @@ class CanvasText implements Tool {
   }
 
   @override
-  void update({Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false}) {
+  void update(
+      {Offset? point,
+      UpdateType? updateType,
+      Paint? paint,
+      TextStyle? textStyle,
+      bool enabled = false}) {
     this.start = point ?? this.start;
     this.textStyle = textStyle ?? this.textStyle;
     this.enabled = enabled;

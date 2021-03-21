@@ -34,7 +34,6 @@ class _GestureWidgetState extends State<GestureWidget> {
   int checkTextZones(Offset point) {
     int checkZoneElement = -1;
     widget.currentElements.asMap().forEach((key, value) {
-      print('$key => ${value.hitZone(point)}');
       checkZoneElement = value.hitZone(point) ? key : checkZoneElement;
     });
 
@@ -48,18 +47,50 @@ class _GestureWidgetState extends State<GestureWidget> {
   Widget get gestureForTool {
     if (currentTool == DrawingTool.Text) {
       return GestureDetector(
-        onTapDown: (event) {
-          widget.createTool(CanvasText(
-            text: 'Введите текст',
-            start: event.localPosition,
-            paint: widget.paint,
-            textStyle: widget.textStyle,
-          ));
+        onTapUp: (event) {
+          setState(() {
+            editingElement = checkTextZones(event.localPosition);
+          });
+          if (editingElement == -1) {
+            widget.createTool(CanvasText(
+              text: 'Введите текст',
+              start: event.localPosition,
+              paint: widget.paint,
+              textStyle: widget.textStyle,
+            ));
+            print(widget.textStyle);
+          }
+          else {
+            widget.updateTool(
+                editedShape: widget.currentElements[editingElement],
+                enable: true);
+            // print(widget.currentElements[editingElement].enabled);
+            widget.currentElements[editingElement].focusNode.requestFocus();
+          }
         },
-        onDoubleTapDown: (event) {},
-        onLongPressStart: (event) {},
-        onLongPressMoveUpdate: (event) {},
-        onLongPressEnd: (event) {},
+        onLongPressStart: (event) {
+          setState(() {
+            editingElement = checkTextZones(event.localPosition);
+            print(editingElement);
+          });
+          widget.updateTool(
+              editedShape: widget.currentElements[editingElement],
+              point: event.localPosition,
+              enable: true
+          );
+        },
+        onLongPressMoveUpdate: (event) {
+          widget.updateTool(
+              editedShape: widget.currentElements[editingElement],
+              point: event.localPosition,
+              enable: true
+          );
+        },
+        onLongPressEnd: (event) {
+          widget.updateTool(
+              editedShape: widget.currentElements[editingElement],
+              enable: false);
+        },
       );
     } else {
       return GestureDetector(
@@ -91,17 +122,17 @@ class _GestureWidgetState extends State<GestureWidget> {
                   dashedArray: [1.0],
                 ));
             }
-          }
-          else {
+          } else {
             widget.updateTool(
                 editedShape: widget.currentElements[editingElement],
-                point: event.localPosition
-            );
+                point: event.localPosition);
           }
         },
         onPanUpdate: (event) {
           widget.updateTool(
-              editedShape: editingElement == -1 ? null : widget.currentElements[editingElement],
+              editedShape: editingElement == -1
+                  ? null
+                  : widget.currentElements[editingElement],
               point: event.localPosition);
         },
       );

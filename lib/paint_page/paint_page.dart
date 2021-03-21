@@ -56,13 +56,13 @@ class _PaintPageState extends State<PaintPage> {
       FontStyle? fontStyle,
       TextDecoration? decoration}) {
     setState(() {
-      _textStyle = _textStyle.merge(TextStyle(
+      _textStyle = new TextStyle(
         fontSize: fontSize,
-        color: color ?? _currentPaint.color,
+        color: color,
         fontStyle: fontStyle,
         fontWeight: fontWeight,
         decoration: decoration,
-      ));
+      );
       _currentPaint.color = color ?? _currentPaint.color;
     });
   }
@@ -136,9 +136,9 @@ class _PaintPageState extends State<PaintPage> {
     });
   }
 
-  void update({Tool? editedShape, required Offset point}) {
+  void update({Tool? editedShape, required Offset point, bool? enable }) {
     setState(() {
-      editedShape?.update(point: point, updateType: UpdateType.SetCenterPoint);
+      editedShape?.update(point: point, updateType: UpdateType.SetCenterPoint, enabled: enable ?? false);
       if (editedShape == null) _shapeAllList.last.update(point: point);
     });
   }
@@ -173,28 +173,14 @@ class _PaintPageState extends State<PaintPage> {
               left: _shapeTextList[index].start.dx,
               top: _shapeTextList[index].start.dy,
               child: Container(
-                decoration: BoxDecoration(
-                  border: _shapeTextList[index].enabled
-                      ? Border.all(
-                          width: 1,
-                          style: BorderStyle.solid,
-                        )
-                      : null,
-                ),
-                width: 175,
+                width: _shapeTextList[index].textPainter.size.width + 10.0,
                 child: TextField(
+                  minLines: 1,
+                  maxLines: 1,
+                  maxLength: 16,
                   controller: _shapeTextList[index].text,
                   enabled: _shapeTextList[index].enabled,
                   focusNode: _shapeTextList[index].focusNode,
-                  maxLength: 16,
-                  onTap: () {
-                    setState(() {
-                      _shapeTextList[index].text.selection = TextSelection(
-                        baseOffset: 0,
-                        extentOffset: _shapeTextList[index].text.text.length,
-                      );
-                    });
-                  },
                   onSubmitted: (value) {
                     setState(() {
                       _shapeTextList[index].enabled = false;
@@ -207,6 +193,7 @@ class _PaintPageState extends State<PaintPage> {
                   style: _shapeTextList[index].textStyle,
                   decoration: InputDecoration.collapsed(
                     hintText: '',
+                    border: InputBorder.none,
                   ),
                   // _shapeTextList[index].text,
                 ),
