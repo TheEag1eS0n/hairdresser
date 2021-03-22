@@ -1,10 +1,7 @@
 import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:hairdresser/custom_arrow_path.dart';
 import 'package:hairdresser/paint_page/tool.dart';
-
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:arrow_path/arrow_path.dart';
 import 'package:path_drawing/path_drawing.dart';
 
 class ArrowLine implements Tool {
@@ -12,15 +9,15 @@ class ArrowLine implements Tool {
   Offset start;
   @override
   late Offset end;
-
   @override
   late TextStyle textStyle;
 
   late Offset center;
 
+  List<double> dashedArray;
+
   @override
-  ArrowLine(
-      {required this.start, required this.paint, required this.dashedArray}) {
+  ArrowLine({required this.start, required this.paint, required this.dashedArray}) {
     end = start;
     center = (start + end) / 2;
   }
@@ -28,22 +25,20 @@ class ArrowLine implements Tool {
   @override
   Paint paint;
 
-  List<double> dashedArray;
-
   Offset get centerOfBaseLine => (start + end) / 2;
-  Offset get advancedPoint =>
-      centerOfBaseLine + (center - centerOfBaseLine) * 2;
+  Offset get advancedPoint => centerOfBaseLine + (center - centerOfBaseLine) * 2;
 
   @override
   Path get path {
     Path path = Path()
       ..moveTo(start.dx, start.dy)
       ..quadraticBezierTo(advancedPoint.dx, advancedPoint.dy, end.dx, end.dy);
-    Path dashedPath =
-        dashPath(path, dashArray: CircularIntervalList<double>(dashedArray));
-    ArrowPath.make(path: dashedPath, isDoubleSided: false, isAdjusted: false);
-    return dashedPath;
+
+    Path dashedPath = dashPath(path, dashArray: CircularIntervalList<double>(dashedArray));
+
+    return ArrowPath.make(path: dashedPath);
   }
+
 
   double distanceToLine(Offset p) {
     double dx = (p.dx - start.dx) * (end.dx - start.dx);
@@ -60,26 +55,22 @@ class ArrowLine implements Tool {
   }
 
   @override
-  bool hitZone(tap) => distanceToLine(tap) <= paint.strokeWidth;
+  bool hitZone(tap) {
+    if (paint.strokeWidth < 4)
+      return distanceToLine(tap) <= 5;
+    return distanceToLine(tap) <= paint.strokeWidth;
+  }
 
   @override
-  // TODO: implement textPainter
-  TextPainter get textPainter => throw UnimplementedError();
-
-  @override
-  void update(
-      {Offset? point,
-      UpdateType? updateType,
-      Paint? paint,
-      TextStyle? textStyle,
-      bool enabled = false}) {
+  void update({Offset? point, UpdateType? updateType, Paint? paint, TextStyle? textStyle, bool enabled = false}) {
     switch (updateType) {
-      case UpdateType.SetEndPoint:
-        end = point ?? end;
+      case UpdateType.SetCenterPoint:
+        center = point!;
+        break;
+      default:
+        end = point!;
         center = (start + end) / 2;
         break;
-      case UpdateType.SetCenterPoint:
-        center = point ?? center;
     }
   }
 
@@ -92,4 +83,8 @@ class ArrowLine implements Tool {
 
   @override
   late FocusNode focusNode;
+
+  @override
+  // TODO: implement textPainter
+  TextPainter get textPainter => throw UnimplementedError();
 }
