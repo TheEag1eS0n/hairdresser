@@ -217,6 +217,7 @@ class _PaintPageState extends State<PaintPage> {
           createTool: create,
           updateTool: update,
           currentElements: currentList,
+          dashArray: _currentDashArray,
         ),
         Positioned(
           bottom: 50,

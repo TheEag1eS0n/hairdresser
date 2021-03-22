@@ -12,10 +12,11 @@ class GestureWidget extends StatefulWidget {
   final createTool;
   final updateTool;
 
-  Paint paint;
+  final Paint paint;
   final TextStyle textStyle;
+  final List<double> dashArray;
 
-  List<Tool> currentElements;
+  final List<Tool> currentElements;
 
   GestureWidget({
     required this.currentTool,
@@ -24,6 +25,7 @@ class GestureWidget extends StatefulWidget {
     required this.createTool,
     required this.updateTool,
     required this.currentElements,
+    this.dashArray = const [1.0],
   });
 
   @override
@@ -112,14 +114,14 @@ class _GestureWidgetState extends State<GestureWidget> {
                 widget.createTool(CurveLine(
                   start: event.localPosition,
                   paint: widget.paint,
-                  dashedArray: [1.0],
+                  dashedArray: widget.dashArray,
                 ));
                 break;
               case DrawingTool.Arrow:
                 widget.createTool(ArrowLine(
                   start: event.localPosition,
                   paint: widget.paint,
-                  dashedArray: [1.0],
+                  dashedArray: widget.dashArray,
                 ));
             }
           } else {
