@@ -53,6 +53,7 @@ class _GestureWidgetState extends State<GestureWidget> {
           if (editingElement != -1 && widget.currentElements.isNotEmpty)
             widget.updateTool(
                 editedShape: widget.currentElements[editingElement],
+                // point: event.localPosition,
                 enable: false);
           setState(() {
             editingElement = checkTextZones(event.localPosition);
@@ -68,6 +69,7 @@ class _GestureWidgetState extends State<GestureWidget> {
           else {
             widget.updateTool(
                 editedShape: widget.currentElements[editingElement],
+                // point: event.localPosition,
                 enable: true);
             widget.currentElements[editingElement].focusNode.requestFocus();
           }
@@ -92,6 +94,7 @@ class _GestureWidgetState extends State<GestureWidget> {
         onLongPressEnd: (event) {
           widget.updateTool(
               editedShape: widget.currentElements[editingElement],
+              // point: event.localPosition,
               enable: false);
         },
       );

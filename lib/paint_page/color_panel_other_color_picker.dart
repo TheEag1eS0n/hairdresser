@@ -67,16 +67,17 @@ class _ColorPanelState extends State<ColorPanel> {
           )
         ],
       ),
-      width: 200,
+      width: 250,
       child: Column(
         children: [
-          AnimatedContainer(
-              duration: Duration(milliseconds: 500),
-              height: currentTool != DrawingTool.Eraser ? 100 : 0,
+          Container(
+              // duration: Duration(milliseconds: 500),
+              height: currentTool != DrawingTool.Eraser ? 115 : 0,
               child: GridView.count(
                 crossAxisCount: 6,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
+                padding: EdgeInsets.all(0),
                 children: List.generate(
                   selected.length,
                   (index) => InkWell(
@@ -227,6 +228,7 @@ class _ColorPanelState extends State<ColorPanel> {
                   width: 105,
                   child: GridView.count(
                     crossAxisCount: 3,
+                    padding: EdgeInsets.all(0),
                     children: List.generate(
                       3,
                       (index) => InkWell(
@@ -255,6 +257,7 @@ class _ColorPanelState extends State<ColorPanel> {
                   width: 75,
                   child: GridView.count(
                     crossAxisCount: 2,
+                    padding: EdgeInsets.all(0),
                     children: List.generate(
                       2,
                       (index) => InkWell(
@@ -290,10 +293,11 @@ class _ColorPanelState extends State<ColorPanel> {
               ],
             )
           else
-            Ink(
-              height: 40,
+            Container(
+              height: 50,
               child: GridView.count(
                 crossAxisCount: 5,
+                padding: EdgeInsets.all(0),
                 children: List.generate(
                   5,
                   (index) => InkWell(
@@ -310,8 +314,9 @@ class _ColorPanelState extends State<ColorPanel> {
                           ? Color(0xff4D53E0)
                           : Colors.white,
                       image: AssetImage('assets/icons/line${index + 1}.png'),
-                      height: 30,
-                      width: 30,
+                      height: 20,
+                      width: 20,
+                      fit: BoxFit.contain,
                     ),
                   ),
                 ),
@@ -322,6 +327,7 @@ class _ColorPanelState extends State<ColorPanel> {
             height:
                 showColorPicker && currentTool != DrawingTool.Eraser ? 275 : 0,
             child: ListView(
+              padding: EdgeInsets.all(0),
               children: [
                 ColorPicker(
                   onColorChanged: (color) {

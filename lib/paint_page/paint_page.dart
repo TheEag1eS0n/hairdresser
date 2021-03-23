@@ -6,6 +6,8 @@ import 'package:hairdresser/paint_page/canvas_painter.dart';
 import 'package:hairdresser/paint_page/color_panel_other_color_picker.dart';
 import 'package:hairdresser/paint_page/stroke_width.dart';
 import 'package:hairdresser/paint_page/tool.dart';
+import 'package:hairdresser/paint_page/tools/arrow.dart';
+import 'package:hairdresser/paint_page/tools/curve.dart';
 import 'package:hairdresser/paint_page/tools/text.dart';
 import 'package:hairdresser/paint_page/tools_list.dart';
 
@@ -102,11 +104,26 @@ class _PaintPageState extends State<PaintPage> {
 
   List<Tool> _shapeUndoCache = [];
 
+  void addToList(Tool tool) {
+    setState(() {
+      switch (tool.runtimeType) {
+        case CanvasText:
+          _shapeTextList.add(tool);
+          break;
+        case ArrowLine:
+          _shapeArrowList.add(tool);
+          break;
+        case CurveLine:
+          _shapeLineList.add(tool);
+          break;
+      }
+    });
+  }
+
   void redo() {
     setState(() {
       _shapeAllList.add(_shapeUndoCache.removeLast());
-      if (_shapeAllList.last.runtimeType == CanvasText)
-        _shapeTextList.add(_shapeAllList.last);
+      addToList(_shapeAllList.last);
     });
   }
 
@@ -119,9 +136,16 @@ class _PaintPageState extends State<PaintPage> {
     });
   }
 
+  void clearRedoCache() {
+    setState(() {
+      _shapeUndoCache = [];
+    });
+  }
+
   void create(Tool tool) {
     setState(() {
       _shapeAllList.add(tool);
+      clearRedoCache();
       switch (_currentTool) {
         case DrawingTool.Curve:
           _shapeLineList.add(_shapeAllList.last);
@@ -136,7 +160,7 @@ class _PaintPageState extends State<PaintPage> {
     });
   }
 
-  void update({Tool? editedShape, required Offset point, bool? enable }) {
+  void update({Tool? editedShape, Offset? point, bool? enable }) {
     setState(() {
       editedShape?.update(point: point, updateType: UpdateType.SetCenterPoint, enabled: enable ?? false);
       if (editedShape == null) _shapeAllList.last.update(point: point);
@@ -163,7 +187,7 @@ class _PaintPageState extends State<PaintPage> {
         CustomPaint(
           foregroundPainter: ShapesCanvas(shapes: _shapeAllList),
           child: Center(
-            child: Image.asset('assets/images/bg-head.png'),
+            child: Image.asset('./assets/images/bg-head.png'),
           ),
         ),
         Stack(
