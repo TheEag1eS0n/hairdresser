@@ -29,27 +29,27 @@ class BottomBar extends StatelessWidget {
           ToggleButtons(
             children: <Widget>[
               Image(
-                image: AssetImage('icons/brush.png'),
+                image: AssetImage('assets/icons/brush.png'),
                 height: 20,
                 width: 20,
               ),
               Image(
-                image: AssetImage('icons/line_curve.png'),
+                image: AssetImage('assets/icons/line_curve.png'),
                 height: 20,
                 width: 20,
               ),
               Image(
-                image: AssetImage('icons/eraser.png'),
+                image: AssetImage('assets/icons/eraser.png'),
                 height: 20,
                 width: 20,
               ),
               Image(
-                image: AssetImage('icons/text.png'),
+                image: AssetImage('assets/icons/text.png'),
                 height: 20,
                 width: 20,
               ),
               Image(
-                image: AssetImage('icons/arrow.png'),
+                image: AssetImage('assets/icons/arrow.png'),
                 height: 20,
                 width: 20,
               ),

@@ -10,7 +10,7 @@ class Erase implements Tool {
   @override
   Paint paint = Paint()
     ..color = Colors.transparent
-    ..blendMode = BlendMode.screen
+    ..blendMode = BlendMode.clear
     ..style = PaintingStyle.stroke
     ..strokeCap = StrokeCap.round
     ..strokeWidth = 20;

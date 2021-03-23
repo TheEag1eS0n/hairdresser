@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:flex_color_picker/flex_color_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hairdresser/paint_page/stroke_width.dart';
@@ -237,7 +234,7 @@ class _ColorPanelState extends State<ColorPanel> {
                           color: brushSizeSelected[index]
                               ? Color(0xff4D53E0)
                               : Colors.white,
-                          image: AssetImage('icons/line${index + 1}.png'),
+                          image: AssetImage('assets/icons/line${index + 1}.png'),
                           height: 20,
                           width: 20,
                         ),
@@ -266,7 +263,7 @@ class _ColorPanelState extends State<ColorPanel> {
                               ? Color(0xff4D53E0)
                               : Colors.white,
                           image: AssetImage(
-                              'icons/${index == 0 ? 'dotted' : 'dashed'}.png'),
+                              'assets/icons/${index == 0 ? 'dotted' : 'dashed'}.png'),
                           height: 20,
                           width: 20,
                         ),
@@ -312,7 +309,7 @@ class _ColorPanelState extends State<ColorPanel> {
                       color: brushSizeSelected[index]
                           ? Color(0xff4D53E0)
                           : Colors.white,
-                      image: AssetImage('icons/line${index + 1}.png'),
+                      image: AssetImage('assets/icons/line${index + 1}.png'),
                       height: 30,
                       width: 30,
                     ),

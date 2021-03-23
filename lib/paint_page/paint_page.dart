@@ -163,7 +163,7 @@ class _PaintPageState extends State<PaintPage> {
         CustomPaint(
           foregroundPainter: ShapesCanvas(shapes: _shapeAllList),
           child: Center(
-            child: Image.asset('images/bg-head.png'),
+            child: Image.asset('assets/images/bg-head.png'),
           ),
         ),
         Stack(
