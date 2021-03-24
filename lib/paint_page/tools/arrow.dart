@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:hairdresser/custom_arrow_path.dart';
+import 'file:///D:/IdeaProjects/hairdresser/lib/paint_page/custom_arrow_path.dart';
 import 'package:hairdresser/paint_page/tool.dart';
 import 'package:path_drawing/path_drawing.dart';
 
