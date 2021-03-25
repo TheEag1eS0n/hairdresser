@@ -1,11 +1,11 @@
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:ui';
 
 class ArrowPath {
   static Path make({
     required Path path,
     double tipLength = 15,
-    double tipAngle = math.pi * 0.2,
+    double tipAngle = pi * 0.2,
     bool isDoubleSided = false,
     bool isAdjusted = true,
   }) =>
@@ -17,7 +17,7 @@ class ArrowPath {
 
     Tangent? tan;
     double adjustmentAngle = 0;
-    double angle = math.pi - tipAngle;
+    double angle = pi - tipAngle;
 
     if (path.computeMetrics().length > 0) {
       PathMetric lastPathMetric = path.computeMetrics().last;
@@ -47,8 +47,8 @@ class ArrowPath {
   }
 
   static Offset _rotateVector(Offset vector, double angle) => Offset(
-    math.cos(angle) * vector.dx - math.sin(angle) * vector.dy,
-    math.sin(angle) * vector.dx + math.cos(angle) * vector.dy,
+    cos(angle) * vector.dx - sin(angle) * vector.dy,
+    sin(angle) * vector.dx + cos(angle) * vector.dy,
   );
 
   static double _getVectorsDotProduct(Offset vector1, Offset vector2) =>
@@ -56,7 +56,7 @@ class ArrowPath {
 
   // Clamp to avoid rounding issues when the 2 vectors are equal.
   static double _getAngleBetweenVectors(Offset vector1, Offset vector2) =>
-      math.acos((_getVectorsDotProduct(vector1, vector2) /
+      acos((_getVectorsDotProduct(vector1, vector2) /
           (vector1.distance * vector2.distance))
           .clamp(-1.0, 1.0));
 }

@@ -182,90 +182,92 @@ class _PaintPageState extends State<PaintPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        CustomPaint(
-          foregroundPainter: ShapesCanvas(shapes: _shapeAllList),
-          child: Center(
-            child: Image.asset('./assets/images/bg-head.png'),
+    return Scaffold(
+      body: Stack(
+        children: [
+          CustomPaint(
+            foregroundPainter: ShapesCanvas(shapes: _shapeAllList),
+            child: Center(
+              child: Image.asset('./assets/images/bg-head.png'),
+            ),
           ),
-        ),
-        Stack(
-          children: List.generate(
-            _shapeTextList.length,
-            (index) => Positioned(
-              left: _shapeTextList[index].start.dx,
-              top: _shapeTextList[index].start.dy,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: _shapeTextList[index].enabled
-                      ? Border.all(
-                          width: 1,
-                          style: BorderStyle.solid,
-                        )
-                      : null,
-                  borderRadius: BorderRadius.all(Radius.circular(5.0))
-                ),
-                width: _shapeTextList[index].textPainter.size.width + 20,
-                child: TextField(
-                  minLines: 1,
-                  maxLines: 1,
-                  maxLength: 16,
-                  controller: _shapeTextList[index].text,
-                  enabled: _shapeTextList[index].enabled,
-                  focusNode: _shapeTextList[index].focusNode,
-                  onSubmitted: (value) {
-                    setState(() {
-                      _shapeTextList[index].enabled = false;
-                      if (value.length == 0) {
-                        _shapeAllList.remove(_shapeTextList[index]);
-                        _shapeTextList.remove(_shapeTextList[index]);
-                      }
-                    });
-                  },
-                  style: _shapeTextList[index].textStyle,
-                  decoration: InputDecoration.collapsed(
-                    hintText: '',
-                    border: InputBorder.none,
+          Stack(
+            children: List.generate(
+              _shapeTextList.length,
+              (index) => Positioned(
+                left: _shapeTextList[index].start.dx,
+                top: _shapeTextList[index].start.dy,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: _shapeTextList[index].enabled
+                        ? Border.all(
+                            width: 1,
+                            style: BorderStyle.solid,
+                          )
+                        : null,
+                    borderRadius: BorderRadius.all(Radius.circular(5.0))
                   ),
-                  // _shapeTextList[index].text,
+                  width: _shapeTextList[index].textPainter.size.width + 20,
+                  child: TextField(
+                    minLines: 1,
+                    maxLines: 1,
+                    maxLength: 16,
+                    controller: _shapeTextList[index].text,
+                    enabled: _shapeTextList[index].enabled,
+                    focusNode: _shapeTextList[index].focusNode,
+                    onSubmitted: (value) {
+                      setState(() {
+                        _shapeTextList[index].enabled = false;
+                        if (value.length == 0) {
+                          _shapeAllList.remove(_shapeTextList[index]);
+                          _shapeTextList.remove(_shapeTextList[index]);
+                        }
+                      });
+                    },
+                    style: _shapeTextList[index].textStyle,
+                    decoration: InputDecoration.collapsed(
+                      hintText: '',
+                      border: InputBorder.none,
+                    ),
+                    // _shapeTextList[index].text,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-        GestureWidget(
-          currentTool: _currentTool,
-          paint: _currentPaint,
-          textStyle: _textStyle,
-          createTool: create,
-          updateTool: update,
-          currentElements: currentList,
-          dashArray: _currentDashArray,
-        ),
-        Positioned(
-          bottom: 50,
-          left: 0,
-          child: ColorPanel(
+          GestureWidget(
             currentTool: _currentTool,
-            setStyle: _currentTool != DrawingTool.Text
-                ? setCurrentPaint
-                : setCurrentTextStyle,
-            currentWidth: _currentWidth,
+            paint: _currentPaint,
+            textStyle: _textStyle,
+            createTool: create,
+            updateTool: update,
+            currentElements: currentList,
+            dashArray: _currentDashArray,
           ),
-        ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: BottomBar(
-            setTool: setCurrentTool,
-            currentTool: _currentTool,
-            redoMethod: _shapeUndoCache.isEmpty ? null : redo,
-            undoMethod: _shapeAllList.isEmpty ? null : undo,
+          Positioned(
+            bottom: 50,
+            left: 0,
+            child: ColorPanel(
+              currentTool: _currentTool,
+              setStyle: _currentTool != DrawingTool.Text
+                  ? setCurrentPaint
+                  : setCurrentTextStyle,
+              currentWidth: _currentWidth,
+            ),
           ),
-        ),
-      ],
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: BottomBar(
+              setTool: setCurrentTool,
+              currentTool: _currentTool,
+              redoMethod: _shapeUndoCache.isEmpty ? null : redo,
+              undoMethod: _shapeAllList.isEmpty ? null : undo,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
