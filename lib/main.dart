@@ -19,9 +19,10 @@ class MyApp extends StatelessWidget {
             crossAxisSpacing: 15,
             mainAxisSpacing: 15,
             children: List.generate(
-                6,
-                (index) {
-                  if (index == 0)
+              6,
+              (index) {
+                switch (index) {
+                  case 0:
                     return Container(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,7 +93,8 @@ class MyApp extends StatelessWidget {
                               children: [
                                 Container(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Дата визита:',
@@ -160,8 +162,29 @@ class MyApp extends StatelessWidget {
                         ],
                       ),
                     );
-                  return LayoutPage(backgroundImage: AssetImage('assets/images/head-face.png'));
-                },
+                  case 1:
+                    return LayoutPage(
+                        backgroundImage:
+                            new AssetImage('assets/images/head-top.png'));
+                  case 2:
+                    return LayoutPage(
+                        backgroundImage:
+                            AssetImage('assets/images/head-face.png'));
+                  case 3:
+                    return LayoutPage(
+                        backgroundImage:
+                            AssetImage('assets/images/head-occiput.png'));
+                  case 4:
+                    return LayoutPage(
+                        backgroundImage:
+                            AssetImage('assets/images/head-right.png'));
+                  case 5:
+                    return LayoutPage(
+                        backgroundImage:
+                            AssetImage('assets/images/head-left.png'));
+                }
+                return Container();
+              },
             ),
           ),
         ),

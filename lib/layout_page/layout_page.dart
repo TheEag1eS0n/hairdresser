@@ -9,7 +9,10 @@ class LayoutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return InkWell(
+      onTap: () {
+        print(backgroundImage);
+      },
       child: Container(
         width: width,
         height: height,
@@ -23,7 +26,7 @@ class LayoutPage extends StatelessWidget {
             )
           ],
           image: DecorationImage(
-            image: AssetImage('assets/images/bg-head.png'),
+            image: backgroundImage,
             fit: BoxFit.contain,
           ),
           color: Colors.white,
